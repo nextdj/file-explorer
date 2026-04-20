@@ -1,0 +1,7 @@
+{
+  "name": "my-workspace",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --parallel --filter @nextdj/file-explorer --filter web dev"
+  }
+}

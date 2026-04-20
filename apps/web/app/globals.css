@@ -1,0 +1,4 @@
+@import "tailwindcss";
+
+/* 关键：显式包含外部组件库的源码路径 */
+@source "../../../packages/file-explorer/src/**/*.{ts,tsx}";

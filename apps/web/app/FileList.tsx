@@ -38,11 +38,9 @@ const STORAGE_ID = "1";
 export function FileList({
   initialData,
   initialStorages,
-  lang,
 }: {
   initialData: FileResponseData | null;
   initialStorages: StorageResponseData;
-  lang: FileExplorerLocale;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -217,7 +215,7 @@ Size: ${formatBytes(file.size)}</pre>
   return (
     <div>
       <FileExplorer
-        lang={lang}
+        lang="en"
         toolbarStyle="default"
         features={{
           uploadFile: true,

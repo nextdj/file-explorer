@@ -2,6 +2,12 @@
 
 This repository is a small pnpm monorepo for the `@nextdj/file-explorer` package and its demo app.
 
+Live demo:
+
+- [https://file-explorer-demo.vercel.app/](https://file-explorer-demo.vercel.app/)
+
+![File Explorer Demo](./packages/file-explorer/assets/demo.png)
+
 It includes:
 
 - the reusable React component package

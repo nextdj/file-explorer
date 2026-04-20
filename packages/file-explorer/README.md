@@ -12,6 +12,12 @@ A React file explorer component with:
 
 It is designed for app teams that want a polished file browser UI, while still keeping data loading, CRUD, uploads, and business rules in the host app.
 
+Live demo:
+
+- [https://file-explorer-demo.vercel.app/](https://file-explorer-demo.vercel.app/)
+
+![File Explorer Demo](./assets/demo.png)
+
 ## Install
 
 ```bash

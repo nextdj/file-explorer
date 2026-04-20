@@ -1,7 +1,15 @@
 {
   "name": "@nextdj/file-explorer",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "A React file explorer component with uploads, context menus, detail panels, and app-side extensibility.",
+  "homepage": "https://github.com/nextdj/file-explorer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nextdj/file-explorer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/nextdj/file-explorer/issues"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

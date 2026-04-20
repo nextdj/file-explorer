@@ -16,7 +16,7 @@ Live demo:
 
 - [https://file-explorer-demo.vercel.app/](https://file-explorer-demo.vercel.app/)
 
-![File Explorer Demo](./assets/demo.png)
+![File Explorer Demo](https://raw.githubusercontent.com/nextdj/file-explorer/main/packages/file-explorer/assets/demo.png)
 
 ## Install
 

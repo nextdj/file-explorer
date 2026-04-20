@@ -10,7 +10,7 @@ importers:
 
   apps/web:
     dependencies:
-      '@my-ws/file-explorer':
+      '@nextdj/file-explorer':
         specifier: workspace:*
         version: link:../../packages/file-explorer
       lucide-react:

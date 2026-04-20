@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@nextdj/file-explorer": "workspace:*",
+    "@vercel/analytics": "^2.0.1",
     "lucide-react": "^0.559.0",
     "next": "^14.0.0",
     "react": "^18.2.0",

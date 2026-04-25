@@ -83,6 +83,15 @@ export interface FileExplorerFeatures {
   tagFilter?: boolean;
 }
 
+export interface FileExplorerViewControls {
+  showDisplayButton?: boolean;
+  showViewToggleButton?: boolean;
+  showSortOptions?: boolean;
+  showSortDirectionOptions?: boolean;
+  showHiddenFileOptions?: boolean;
+  showTagFilterOption?: boolean;
+}
+
 export type FileUploadStatus =
   | "queued"
   | "uploading"
@@ -137,6 +146,9 @@ export interface FileExplorerProps {
   files?: FileNode[];
   breadcrumbs?: BreadcrumbItem[];
   storageInfo?: FileExplorerStorageInfo;
+  showBreadcrumbs?: boolean;
+  showToolbar?: boolean;
+  viewControls?: FileExplorerViewControls;
   transferTargets?: TransferTarget[];
   dataSource?: TransferDataSource[];
   loadDataSourceFolder?: (

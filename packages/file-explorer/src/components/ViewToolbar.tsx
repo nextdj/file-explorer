@@ -45,74 +45,90 @@ export const ViewToolbar = ({
   showCreateAction = true,
   showSelectionActions = true,
 }: ViewToolbarProps) => {
-  const { features, openUploadDialog, t } = useFileExplorerContext();
+  const { features, openUploadDialog, t, viewControls } =
+    useFileExplorerContext();
   const selectedCount = selection.selected.length;
   const isListView = explorer.view.mode === "list";
   const { sort, filter } = explorer;
 
   // Keep toolbar-only display configuration local to the toolbar so this file
   // remains self-contained after the component merge.
-  const menuItems: ToolbarMenuItem[] = [
-    { label: t("toolbar.sortBy"), isHeader: true },
-    {
-      label: t("toolbar.name"),
-      action: "sort:name",
-      checked: sort.field === "name",
-    },
-    {
-      label: t("toolbar.modifiedDate"),
-      action: "sort:updatedAt",
-      checked: sort.field === "updatedAt",
-    },
-    {
-      label: t("toolbar.type"),
-      action: "sort:type",
-      checked: sort.field === "type",
-    },
-    {
-      label: t("toolbar.size"),
-      action: "sort:size",
-      checked: sort.field === "size",
-    },
-    { label: t("toolbar.sortDirection"), isHeader: true },
-    {
-      label: t("toolbar.ascending"),
-      action: "dir:asc",
-      checked: sort.direction === "asc",
-    },
-    {
-      label: t("toolbar.descending"),
-      action: "dir:desc",
-      checked: sort.direction === "desc",
-    },
-    { label: t("toolbar.hiddenFiles"), isHeader: true },
-    {
-      label: t("toolbar.showHidden"),
-      action: "hidden:show",
-      checked: filter.showHidden,
-    },
-    {
-      label: t("toolbar.hideHidden"),
-      action: "hidden:hide",
-      checked: !filter.showHidden,
-    },
-  ];
+  const menuItems: ToolbarMenuItem[] = [];
 
-  const finalMenuItems = features.tagFilter
-    ? [
-        ...menuItems,
-        { label: t("toolbar.tagFilter"), isHeader: true },
-        {
-          label: t("toolbar.colorMultiSelect"),
-          render: () => (
-            <ColorMultiSelect
-              selected={explorer.filter.colors}
-              onChange={explorer.filter.setColors}
-            />
-          ),
-        },
-      ]
-    : menuItems;
+  if (viewControls.showSortOptions) {
+    menuItems.push(
+      { label: t("toolbar.sortBy"), isHeader: true },
+      {
+        label: t("toolbar.name"),
+        action: "sort:name",
+        checked: sort.field === "name",
+      },
+      {
+        label: t("toolbar.modifiedDate"),
+        action: "sort:updatedAt",
+        checked: sort.field === "updatedAt",
+      },
+      {
+        label: t("toolbar.type"),
+        action: "sort:type",
+        checked: sort.field === "type",
+      },
+      {
+        label: t("toolbar.size"),
+        action: "sort:size",
+        checked: sort.field === "size",
+      },
+    );
+  }
+
+  if (viewControls.showSortDirectionOptions) {
+    menuItems.push(
+      { label: t("toolbar.sortDirection"), isHeader: true },
+      {
+        label: t("toolbar.ascending"),
+        action: "dir:asc",
+        checked: sort.direction === "asc",
+      },
+      {
+        label: t("toolbar.descending"),
+        action: "dir:desc",
+        checked: sort.direction === "desc",
+      },
+    );
+  }
+
+  if (viewControls.showHiddenFileOptions) {
+    menuItems.push(
+      { label: t("toolbar.hiddenFiles"), isHeader: true },
+      {
+        label: t("toolbar.showHidden"),
+        action: "hidden:show",
+        checked: filter.showHidden,
+      },
+      {
+        label: t("toolbar.hideHidden"),
+        action: "hidden:hide",
+        checked: !filter.showHidden,
+      },
+    );
+  }
+
+  const finalMenuItems =
+    features.tagFilter && viewControls.showTagFilterOption
+      ? [
+          ...menuItems,
+          { label: t("toolbar.tagFilter"), isHeader: true },
+          {
+            label: t("toolbar.colorMultiSelect"),
+            render: () => (
+              <ColorMultiSelect
+                selected={explorer.filter.colors}
+                onChange={explorer.filter.setColors}
+              />
+            ),
+          },
+        ]
+      : menuItems;
 
   const handleViewAction = (action: string) => {
     if (action.startsWith("sort:")) {
@@ -236,47 +252,51 @@ export const ViewToolbar = ({
                 />
               )}
 
-              <ActionMenu
-                mode="left-click"
-                items={finalMenuItems}
-                onAction={handleViewAction}
-                trigger={
-                  <Button
-                    variant="ghost"
-                    className="group size-9 rounded-full px-0 sm:h-9 sm:w-auto sm:rounded-lg sm:px-4"
-                    tip={t("action.showOptions")}
-                  >
-                    <div className="flex items-center gap-1">
-                      <ListOrdered
-                        size={14}
-                        className="transition-transform group-data-[state=open]:rotate-180"
-                      />
-                      <span className="hidden sm:inline">
-                        {t("action.display")}
-                      </span>
-                    </div>
-                  </Button>
-                }
-              />
+              {viewControls.showDisplayButton && finalMenuItems.length > 0 ? (
+                <ActionMenu
+                  mode="left-click"
+                  items={finalMenuItems}
+                  onAction={handleViewAction}
+                  trigger={
+                    <Button
+                      variant="ghost"
+                      className="group size-9 rounded-full px-0 sm:h-9 sm:w-auto sm:rounded-lg sm:px-4"
+                      tip={t("action.showOptions")}
+                    >
+                      <div className="flex items-center gap-1">
+                        <ListOrdered
+                          size={14}
+                          className="transition-transform group-data-[state=open]:rotate-180"
+                        />
+                        <span className="hidden sm:inline">
+                          {t("action.display")}
+                        </span>
+                      </div>
+                    </Button>
+                  }
+                />
+              ) : null}
             </div>
 
-            <ToggleButton
-              value={explorer.view.mode}
-              onChange={(value) => explorer.view.setMode(value)}
-              items={[
-                {
-                  value: "grid",
-                  icon: Grid2x2,
-                },
-                {
-                  value: "list",
-                  icon: Rows3,
-                },
-              ]}
-              className="h-8   border border-(--_fe-border) bg-(--_fe-bg) p-px "
-              itemClassName="h-full min-w-8 cursor-pointer    text-(--_fe-text-sub) data-[state=on]:text-(--_fe-selected) hover:text-(--_fe-selected)"
-              showSeparator={false}
-            />
+            {viewControls.showViewToggleButton ? (
+              <ToggleButton
+                value={explorer.view.mode}
+                onChange={(value) => explorer.view.setMode(value)}
+                items={[
+                  {
+                    value: "grid",
+                    icon: Grid2x2,
+                  },
+                  {
+                    value: "list",
+                    icon: Rows3,
+                  },
+                ]}
+                className="h-8   border border-(--_fe-border) bg-(--_fe-bg) p-px "
+                itemClassName="h-full min-w-8 cursor-pointer    text-(--_fe-text-sub) data-[state=on]:text-(--_fe-selected) hover:text-(--_fe-selected)"
+                showSeparator={false}
+              />
+            ) : null}
           </div>
         </>
       )}

@@ -1,16 +1,16 @@
 # @nextdj/file-explorer
 
-A React file explorer component with:
+A React file explorer component for app-side integration.
 
-- grid and list views
-- breadcrumb navigation
-- context menu actions
-- file and folder uploads
-- transfer dialogs for copy and move
-- detail panel support
-- customizable app-side handlers and rendering hooks
+It supports:
 
-It is designed for app teams that want a polished file browser UI, while still keeping data loading, CRUD, uploads, and business rules in the host app.
+- grid and table views
+- breadcrumbs
+- toolbar actions
+- copy / move transfer dialog
+- uploads
+- context menus
+- app-side create / rename / delete / copy / move callbacks
 
 Live demo:
 
@@ -20,23 +20,47 @@ Live demo:
 
 ## Install
 
+### Step 1: Install the package
+
+If your project uses `pnpm`:
+
+```bash
+pnpm add @nextdj/file-explorer
+```
+
+If your project uses `npm`:
+
 ```bash
 npm install @nextdj/file-explorer
 ```
 
-Peer dependencies:
+If your project uses `yarn`:
 
 ```bash
-npm install react react-dom
+yarn add @nextdj/file-explorer
 ```
 
-## Quick Start
+### Step 2: Import the styles
+
+In your global stylesheet, add:
+
+```css
+@import "tailwindcss";
+@import "@nextdj/file-explorer/theme.css";
+@source "../node_modules/@nextdj/file-explorer/dist/**/*.js";
+```
+
+This tells Tailwind to scan the component package and include the styles it uses.
+
+### Step 3: Render the component
+
+The component needs one `data` object:
 
 ```tsx
 import { FileExplorer, type FileExplorerData } from "@nextdj/file-explorer";
 
 const data: FileExplorerData = {
-  breadcrumbs: [{ id: "root", name: "Files" }],
+  breadcrumbs: [{ id: "root", name: "Home" }],
   files: [
     {
       id: "folder-1",
@@ -58,6 +82,74 @@ const data: FileExplorerData = {
 };
 
 export function Example() {
+  return <FileExplorer data={data} />;
+}
+```
+
+## Smallest Working Example
+
+Use this first if you just want to confirm the component renders:
+
+```tsx
+import { FileExplorer, type FileExplorerData } from "@nextdj/file-explorer";
+
+const data: FileExplorerData = {
+  breadcrumbs: [{ id: "root", name: "Home" }],
+  files: [
+    {
+      id: "folder-1",
+      name: "Projects",
+      type: "folder",
+      updatedAt: new Date().toISOString(),
+    },
+    {
+      id: "file-1",
+      name: "readme.txt",
+      type: "file",
+      updatedAt: new Date().toISOString(),
+      size: 1024,
+      extension: "txt",
+      mimeType: "text/plain",
+      mediaType: "file",
+    },
+  ],
+};
+
+export default function Page() {
+  return <FileExplorer data={data} />;
+}
+```
+
+## Common Example
+
+This example includes open, folder navigation, create, rename, delete, move, and copy:
+
+```tsx
+import {
+  FileExplorer,
+  type FileExplorerData,
+  type TransferDataSource,
+} from "@nextdj/file-explorer";
+
+const data: FileExplorerData = {
+  breadcrumbs: [{ id: "root", name: "Home" }],
+  files: [],
+};
+
+const dataSource: TransferDataSource[] = [
+  {
+    id: "local",
+    name: "Local Documents",
+    list: [{ id: "local", name: "Local Documents" }],
+  },
+  {
+    id: "cloud",
+    name: "My Cloud Drive",
+    list: [{ id: "cloud", name: "My Cloud Drive" }],
+  },
+];
+
+export default function Page() {
   return (
     <FileExplorer
       data={data}
@@ -68,33 +160,47 @@ export function Example() {
         console.log("open folder", folder);
       }}
       onNavigateBreadcrumb={(item) => {
-        console.log("navigate breadcrumb", item);
+        console.log("breadcrumb", item);
+      }}
+      onCreate={async ({ name, type, parentId, source }) => {
+        console.log("create", { name, type, parentId, source });
+
+        return {
+          id: `created-${Date.now()}`,
+          name,
+          type,
+          parentId,
+        };
+      }}
+      onRename={async ({ id, name }) => {
+        console.log("rename", { id, name });
+      }}
+      onDelete={async (entries) => {
+        console.log("delete", entries);
+      }}
+      onCopy={async ({ entries, destination }) => {
+        console.log("copy", { entries, destination });
+      }}
+      onMove={async ({ entries, destination }) => {
+        console.log("move", { entries, destination });
+      }}
+      dataSource={dataSource}
+      loadDataSourceFolder={async (source, target) => {
+        console.log("load data source folder", { source, target });
+
+        return {
+          breadcrumbs: [{ id: target.id, name: target.name }],
+          files: [],
+        };
       }}
     />
   );
 }
 ```
 
-## Core Idea
+## Data Shape
 
-`FileExplorer` is a UI component, not a storage system.
-
-Your app is expected to provide:
-
-- the current file list
-- the current breadcrumb path
-- storage capacity info if needed
-- handlers for create, rename, delete, copy, move, and uploads
-
-That means the component stays flexible enough to work with:
-
-- REST APIs
-- GraphQL backends
-- local mock data
-- cloud storage adapters
-- custom business workflows
-
-## Basic Data Model
+### `FileNode`
 
 ```ts
 type FileNode = {
@@ -113,7 +219,7 @@ type FileNode = {
 };
 ```
 
-The component reads a `FileExplorerData` object:
+### `FileExplorerData`
 
 ```ts
 type FileExplorerData = {
@@ -122,19 +228,51 @@ type FileExplorerData = {
 };
 ```
 
-## Main Props
+### `TransferDataSource`
 
-### `data`
-
-The easiest way to drive the component.
-
-```tsx
-<FileExplorer data={{ breadcrumbs, files }} />
+```ts
+type TransferDataSource = {
+  id: string;
+  name: string;
+  list: TransferTarget[];
+};
 ```
 
-### `features`
+### `TransferTarget`
 
-Use `features` to show or hide built-in actions.
+```ts
+type TransferTarget = {
+  id: string;
+  name: string;
+  folderId?: string;
+  parentId?: string;
+  children?: TransferTarget[];
+};
+```
+
+## UI Visibility Controls
+
+You can directly control the top area:
+
+```tsx
+<FileExplorer
+  data={data}
+  showBreadcrumbs={true}
+  showToolbar={true}
+  viewControls={{
+    showDisplayButton: true,
+    showViewToggleButton: true,
+    showSortOptions: true,
+    showSortDirectionOptions: true,
+    showHiddenFileOptions: true,
+    showTagFilterOption: true,
+  }}
+/>
+```
+
+## Features
+
+Use `features` to enable or disable built-in actions:
 
 ```tsx
 <FileExplorer
@@ -143,7 +281,7 @@ Use `features` to show or hide built-in actions.
     uploadFile: true,
     uploadFolder: true,
     newFolder: true,
-    newFile: false,
+    newFile: true,
     preview: true,
     detail: true,
     download: true,
@@ -156,658 +294,74 @@ Use `features` to show or hide built-in actions.
 />
 ```
 
-If a feature is `false`, the component hides it from both the toolbar and the context menu.
-
-### `lang`
-
-Supported locales:
-
-- `en`
-- `zh-CN`
-- `zh-TW`
-- `ja`
-- `ko`
-- `fr`
-- `de`
-- `es`
-- `pt-BR`
-- `ru`
-
-If `lang` is omitted, the component falls back to browser language detection.
-
-```tsx
-<FileExplorer data={data} lang="en" />
-```
-
-### `toolbarStyle`
-
-Controls the top bar style.
-
-Available values:
-
-- `default`
-- `floating`
-- `transparent`
-
-```tsx
-<FileExplorer data={data} toolbarStyle="default" />
-```
-
-## CRUD Callbacks
-
-### `onCreate`
-
-Called when the user confirms creation of a new file or folder.
-
-```tsx
-<FileExplorer
-  data={data}
-  onCreate={async ({ name, type, parentId, source }) => {
-    if (type !== "folder") return;
-
-    const created = await api.createFolder({ name, parentId, sourceId: source?.id });
-
-    return {
-      id: created.id,
-      name: created.name,
-      type: "folder",
-      parentId: created.parentId,
-    };
-  }}
-/>
-```
-
-### `onRename`
-
-```tsx
-<FileExplorer
-  data={data}
-  onRename={async ({ id, name }) => {
-    await api.renameEntry({ id, name });
-  }}
-/>
-```
-
-### `onDelete`
-
-Delete confirmation is best handled in the host app.
-
-```tsx
-<FileExplorer
-  data={data}
-  onDelete={async (entries) => {
-    const confirmed = window.confirm(`Delete ${entries.length} item(s)?`);
-    if (!confirmed) return;
-
-    await api.deleteEntries(entries.map((entry) => entry.id));
-  }}
-/>
-```
-
-### `onCopy`
-
-```tsx
-<FileExplorer
-  data={data}
-  onCopy={async ({ entries, destination }) => {
-    await api.copyEntries({
-      entryIds: entries.map((entry) => entry.id),
-      destinationId: destination.id,
-      destinationFolderId: destination.folderId,
-    });
-  }}
-/>
-```
-
-### `onMove`
-
-```tsx
-<FileExplorer
-  data={data}
-  onMove={async ({ entries, destination }) => {
-    await api.moveEntries({
-      entryIds: entries.map((entry) => entry.id),
-      destinationId: destination.id,
-      destinationFolderId: destination.folderId,
-    });
-  }}
-/>
-```
-
-### `onTagColorsChange`
-
-Use this to persist the selected tag colors in your app storage.
-
-```tsx
-<FileExplorer
-  data={data}
-  onTagColorsChange={async (file, colors) => {
-    await api.updateTagColors({
-      id: file.id,
-      colors,
-    });
-  }}
-/>
-```
-
-## Navigation Callbacks
-
-### `onOpen`
-
-Called when a file is opened.
-
-### `onOpenFolder`
-
-Called when a folder is opened.
-
-### `onNavigateBreadcrumb`
-
-Called when a breadcrumb item is selected.
-
-These three are typically where your app updates route state or requests new data.
-
-```tsx
-<FileExplorer
-  data={data}
-  onOpen={(file) => window.open(`/files/${file.id}`, "_blank")}
-  onOpenFolder={(folder) => router.push(`/?parentId=${folder.id}`)}
-  onNavigateBreadcrumb={(item) => router.push(item.id === "root" ? "/" : `/?parentId=${item.id}`)}
-/>
-```
-
-## Uploads
-
-The component uses Uppy with Tus upload support.
-
-### `uploadOptions`
-
-```tsx
-<FileExplorer
-  data={data}
-  uploadOptions={{
-    endpoint: "https://your-tus-server.example/files/",
-    headers: {
-      Authorization: "Bearer token",
-    },
-    metadata: {
-      bucket: "assets",
-    },
-    chunkSize: 5 * 1024 * 1024,
-    retryDelays: [0, 1000, 3000],
-    maxNumberOfFiles: 100,
-    maxFileSize: 1024 * 1024 * 1024,
-    allowedFileTypes: [".png", ".jpg", ".pdf"],
-  }}
-/>
-```
-
-Available upload options:
-
-- `endpoint`
-- `headers`
-- `metadata`
-- `withCredentials`
-- `autoProceed`
-- `chunkSize`
-- `retryDelays`
-- `maxNumberOfFiles`
-- `maxFileSize`
-- `allowedFileTypes`
-
-### `onUploadStateChange`
-
-If you pass `onUploadStateChange`, the component will emit the upload queue snapshot to the host app.
-
-```tsx
-<FileExplorer
-  data={data}
-  uploadOptions={{ endpoint: "https://your-tus-server.example/files/" }}
-  onUploadStateChange={(snapshot) => {
-    console.log(snapshot.files);
-    console.log(snapshot.summary);
-  }}
-/>
-```
-
-The snapshot shape:
-
-```ts
-type FileUploadSnapshot = {
-  files: FileUploadItem[];
-  summary: {
-    totalProgress: number;
-    totalBytes: number;
-    uploadedBytes: number;
-    totalDurationSeconds: number;
-    fileCount: number;
-    activeCount: number;
-    completedCount: number;
-    errorCount: number;
-  };
-};
-```
-
-Important behavior:
-
-- if `onUploadStateChange` is not provided, the component manages and displays its own upload progress UI
-- if `onUploadStateChange` is provided, the host app is treated as the upload status owner
-- in that mode, the component upload dialog acts as a file picker / uploader launcher, then closes after files are queued
-
-## App-Side Upload Panel Example
-
-```tsx
-const [uploadSnapshot, setUploadSnapshot] = useState<FileUploadSnapshot | null>(null);
-
-<FileExplorer
-  data={data}
-  uploadOptions={{ endpoint: "https://your-tus-server.example/files/" }}
-  onUploadStateChange={setUploadSnapshot}
-/>
-```
-
-Then render your own upload panel anywhere in the app:
-
-```tsx
-{uploadSnapshot ? <MyUploadPanel snapshot={uploadSnapshot} /> : null}
-```
-
-## Real App Integration Example
-
-The most common integration pattern is:
-
-1. your app owns route state
-2. your app fetches the current folder data
-3. `FileExplorer` renders that data
-4. callbacks write changes back to your backend
-5. your app refreshes the current folder after mutations
-
-```tsx
-"use client";
-
-import { useCallback, useEffect, useState } from "react";
-import {
-  FileExplorer,
-  type FileExplorerData,
-  type FileNode,
-} from "@nextdj/file-explorer";
-
-const EMPTY_DATA: FileExplorerData = {
-  breadcrumbs: [{ id: "root", name: "Files" }],
-  files: [],
-};
-
-export function FilesPage() {
-  const [data, setData] = useState<FileExplorerData>(EMPTY_DATA);
-  const [currentFolderId, setCurrentFolderId] = useState<string | undefined>();
-
-  const refreshFolder = useCallback(async (folderId?: string) => {
-    const result = await api.getFilesByPath({ parentId: folderId });
-    setData(result);
-  }, []);
-
-  useEffect(() => {
-    void refreshFolder(currentFolderId);
-  }, [currentFolderId, refreshFolder]);
-
-  return (
-    <FileExplorer
-      data={data}
-      storageInfo={{
-        totalBytes: 512 * 1024 * 1024 * 1024,
-        availableBytes: 420 * 1024 * 1024 * 1024,
-      }}
-      uploadOptions={{
-        endpoint: "https://your-tus-server.example/files/",
-        maxNumberOfFiles: 100,
-        maxFileSize: 1024 * 1024 * 1024,
-      }}
-      onOpen={(file) => {
-        window.open(`/files/${file.id}`, "_blank");
-      }}
-      onOpenFolder={(folder) => {
-        setCurrentFolderId(folder.id);
-      }}
-      onNavigateBreadcrumb={(item) => {
-        const isRoot = item.id === data.breadcrumbs[0]?.id;
-        setCurrentFolderId(isRoot ? undefined : item.id);
-      }}
-      onCreate={async ({ name, type, parentId }) => {
-        if (type !== "folder") return;
-
-        const created = await api.createFolder({ name, parentId });
-        await refreshFolder(currentFolderId);
-
-        return {
-          id: created.id,
-          name: created.name,
-          type: "folder",
-          parentId: created.parentId,
-        };
-      }}
-      onRename={async ({ id, name }) => {
-        await api.renameEntry({ id, name });
-        await refreshFolder(currentFolderId);
-      }}
-      onDelete={async (entries) => {
-        const confirmed = window.confirm(`Delete ${entries.length} item(s)?`);
-        if (!confirmed) return;
-
-        await api.deleteEntries(entries.map((entry) => entry.id));
-        await refreshFolder(currentFolderId);
-      }}
-      onMove={async ({ entries, destination }) => {
-        await api.moveEntries({
-          entryIds: entries.map((entry) => entry.id),
-          destinationId: destination.id,
-          destinationFolderId: destination.folderId,
-        });
-        await refreshFolder(currentFolderId);
-      }}
-      onCopy={async ({ entries, destination }) => {
-        await api.copyEntries({
-          entryIds: entries.map((entry) => entry.id),
-          destinationId: destination.id,
-          destinationFolderId: destination.folderId,
-        });
-        await refreshFolder(currentFolderId);
-      }}
-      onTagColorsChange={async (file, colors) => {
-        await api.updateTagColors({ id: file.id, colors });
-
-        setData((prev) => ({
-          ...prev,
-          files: prev.files.map((item) =>
-            item.id === file.id ? { ...item, tagColors: colors } : item,
-          ),
-        }));
-      }}
-      renderDetail={(file) => (
-        <div>
-          <h3>{file.name}</h3>
-          <p>ID: {file.id}</p>
-          <p>Type: {file.type}</p>
-        </div>
-      )}
-    />
-  );
-}
-```
-
-That pattern keeps all persistence in the app and lets the component stay reusable.
-
-## Custom Preview and Detail
-
-### `renderPreview`
-
-Useful for image, video, or audio previews.
-
-```tsx
-<FileExplorer
-  data={data}
-  renderPreview={(file) => {
-    if (file.mediaType === "image") {
-      return <img src={`/preview/${file.id}`} alt={file.name} className="h-full w-full object-cover" />;
-    }
-
-    return null;
-  }}
-/>
-```
-
-### `renderDetail`
-
-Render custom app-side details in the built-in detail panel.
-
-```tsx
-<FileExplorer
-  data={data}
-  renderDetail={(file) => (
-    <div>
-      <h3>{file.name}</h3>
-      <p>ID: {file.id}</p>
-      <p>Type: {file.type}</p>
-      <p>Updated: {file.updatedAt}</p>
-    </div>
-  )}
-/>
-```
-
-## Storage Capacity Header
-
-If you want the header to show storage totals, pass `storageInfo`.
-
-```tsx
-<FileExplorer
-  data={data}
-  storageInfo={{
-    totalBytes: 512 * 1024 * 1024 * 1024,
-    availableBytes: 420 * 1024 * 1024 * 1024,
-  }}
-/>
-```
-
-## Multi-Source Transfer Support
-
-For copy and move dialogs across multiple sources, provide:
-
-- `dataSource`
-- `transferTargets`
-- `loadDataSourceFolder`
-
-Example:
-
-```tsx
-<FileExplorer
-  data={data}
-  dataSource={[
-    {
-      id: "design",
-      name: "Design Drive",
-      list: [{ id: "design", name: "Design Drive" }],
-    },
-    {
-      id: "marketing",
-      name: "Marketing Vault",
-      list: [{ id: "marketing", name: "Marketing Vault" }],
-    },
-  ]}
-  loadDataSourceFolder={async (source, target) => {
-    return api.getFilesByPath(source.id, {
-      parentId: target.folderId ?? target.id,
-    });
-  }}
-/>
-```
-
-## Context Menu Customization
-
-### Append items
-
-```tsx
-<FileExplorer
-  data={data}
-  appendContextMenuItems={(file) => [
-    {
-      label: "Open in external system",
-      action: "external-open",
-      onSelect: () => {
-        window.open(`/external/${file.id}`, "_blank");
-      },
-    },
-  ]}
-/>
-```
-
-### Hide built-in items
-
-```tsx
-<FileExplorer
-  data={data}
-  hideContextMenuActions={() => ["delete", "move"]}
-/>
-```
-
-### Replace built-in items
-
-```tsx
-<FileExplorer
-  data={data}
-  replaceContextMenuActions={() => ({
-    delete: {
-      label: "Archive",
-      action: "delete",
-    },
-  })}
-/>
-```
-
-### Full override
-
-```tsx
-<FileExplorer
-  data={data}
-  getContextMenuItems={(file, defaultItems) => {
-    return [
-      ...defaultItems,
-      {
-        label: "Inspect metadata",
-        action: "inspect",
-        onSelect: () => console.log(file.metadata),
-      },
-    ];
-  }}
-/>
-```
-
-## Styling Notes
-
-The component includes its own theme CSS and imports it internally.
-
-If your tooling needs a direct CSS entry, this package also exports:
-
-```ts
-import "@nextdj/file-explorer/theme.css";
-```
-
-In most setups, importing `FileExplorer` is enough and you do not need to import the CSS separately.
-
-## Suggested README Images
-
-If you want the npm page to feel more polished, these are the highest-value visuals to add:
-
-1. a full explorer screenshot
-   show the header, breadcrumb, grid/list switch, and a mixed file list
-2. an upload flow screenshot or gif
-   show the upload dialog plus the app-side upload progress panel
-3. a detail panel screenshot
-   show how `renderDetail` extends the built-in detail drawer
-4. a context menu screenshot
-   show built-in actions plus one custom app action
-
-Best placement:
-
-- first screenshot right below the package title and short description
-- upload screenshot in the `Uploads` section
-- detail screenshot in the `Custom Preview and Detail` section
-- context menu screenshot in the `Context Menu Customization` section
-
-If you later want animated demos, short gifs usually work best for:
-
-- switching between grid and list views
-- drag-and-drop upload
-- opening the detail panel
-
-## Development
-
-Inside this monorepo:
-
-```bash
-pnpm dev
-```
-
-That runs:
-
-- `@nextdj/file-explorer` in watch mode and outputs to `dist`
-- `web` in development mode
-
-Useful package-level commands:
-
-```bash
-pnpm --filter @nextdj/file-explorer build
-pnpm --filter @nextdj/file-explorer typecheck
-```
-
-## Publish
-
-The package publishes from `dist`.
-
-Before publishing:
-
-```bash
-pnpm --filter @nextdj/file-explorer build
-```
-
-Then publish from the package directory:
-
-```bash
-npm publish --access public
-```
-
-Because the package name is scoped, the published package will be:
-
-```bash
-@nextdj/file-explorer
-```
-
-## Publish Checklist
-
-Use this checklist before publishing a new version:
-
-1. update the version in `package.json`
-2. run `pnpm --filter @nextdj/file-explorer typecheck`
-3. run `pnpm --filter @nextdj/file-explorer build`
-4. run `pnpm --filter web build`
-5. review the generated `dist` output
-6. review `README.md`
-7. confirm the package name is correct: `@nextdj/file-explorer`
-8. confirm the publish access is public
-9. if needed, log in with `npm login`
-10. publish with `npm publish`
-
-Recommended quick verification:
-
-```bash
-cd packages/file-explorer
-npm pack
-```
-
-That lets you inspect the exact files that would be published before pushing the package to npm.
-
-## License
-
-This repository does not currently include a `LICENSE` file.
-
-If you plan to publish publicly, it is a good idea to add one before release so consumers know how they are allowed to use the package.
-
-## Exported Types
-
-The package exports:
-
-- `CategoryColor`
-- `FileNode`
-- `FileExplorerLocale`
-- `FileExplorerProps`
-- `BreadcrumbItem`
-- `FileExplorerData`
-- `FileUploadItem`
-- `FileUploadSnapshot`
-- `FileUploadStatus`
-- `FileUploadSummary`
-- `FileExplorerUploadOptions`
-
-## Notes
-
-- `react` and `react-dom` are peer dependencies
-- uploads require a valid Tus endpoint
-- the component does not persist data by itself; your app owns the data source
-- for production use, treat callbacks like `onCreate`, `onRename`, `onDelete`, `onCopy`, `onMove`, and `onTagColorsChange` as the persistence boundary
+If a feature is `false`, related actions are hidden from toolbars and context menus.
+
+## Props
+
+| Prop | Type | Default | How to use |
+| --- | --- | --- | --- |
+| `data` | `FileExplorerData` | `undefined` | Recommended main input. Pass `{ breadcrumbs, files }`. |
+| `files` | `FileNode[]` | `[]` | Legacy split input. Used when `data` is not passed. |
+| `breadcrumbs` | `BreadcrumbItem[]` | `[]` | Legacy split input. Used when `data` is not passed. |
+| `storageInfo` | `{ totalBytes?: number; availableBytes?: number }` | `undefined` | Shows capacity text below the header. |
+| `showBreadcrumbs` | `boolean` | `true` | Controls whether the breadcrumb area is visible. |
+| `showToolbar` | `boolean` | `true` | Controls whether the center primary toolbar is visible. |
+| `viewControls` | `FileExplorerViewControls` | all `true` | Controls the right-side display button, view toggle, and display menu sections. |
+| `toolbarStyle` | `"default" \| "floating" \| "transparent"` | `"default"` | Controls header style. |
+| `features` | `FileExplorerFeatures` | all `true` | Enables or disables built-in actions. |
+| `lang` | `string` | auto | Sets locale. |
+| `dateFormat` | `string` | `"YYYY/M/D HH:mm:ss"` | Controls formatted date output. |
+| `renderPreview` | `(file) => ReactNode` | `undefined` | Custom preview renderer for grid items. |
+| `renderDetail` | `(file) => ReactNode` | `undefined` | Custom file detail panel content. |
+| `onOpen` | `(file) => void` | `undefined` | Called when opening a file. |
+| `onOpenFolder` | `(folder) => void` | `undefined` | Called when opening a folder in the main explorer. |
+| `onNavigateBreadcrumb` | `(item) => void` | `undefined` | Called when clicking a breadcrumb. |
+| `onTagColorsChange` | `(file, colors) => void` | `undefined` | Called when a file tag color changes. |
+| `onCreate` | `(payload) => Promise<{ id; name; type; parentId? } \| void> \| { id; name; type; parentId? } \| void` | `undefined` | Handles create actions from both the main explorer and the transfer dialog. `source` is present only for transfer dialog creation. |
+| `onRename` | `(payload) => void \| Promise<void>` | `undefined` | Handles rename. |
+| `onDelete` | `(entries) => void \| Promise<void>` | `undefined` | Handles delete / move to trash. |
+| `onCopy` | `({ entries, destination }) => void \| Promise<void>` | `undefined` | Handles copy confirm. |
+| `onMove` | `({ entries, destination }) => void \| Promise<void>` | `undefined` | Handles move confirm. |
+| `uploadOptions` | `FileExplorerUploadOptions` | `undefined` | Configures Uppy upload behavior. |
+| `onUploadStateChange` | `(snapshot) => void` | `undefined` | Lets the app observe upload progress. |
+| `dataSource` | `TransferDataSource[]` | `[]` | Transfer dialog tabs and root targets. |
+| `loadDataSourceFolder` | `(source, target) => Promise<FileExplorerData>` | `undefined` | Loads folders lazily inside the transfer dialog. |
+| `appendContextMenuItems` | `(file) => FileContextMenuItem[]` | `undefined` | Appends extra context menu items. |
+| `hideContextMenuActions` | `(file) => FileContextMenuActionId[]` | `undefined` | Hides built-in context menu items. |
+| `replaceContextMenuActions` | `(file) => Partial<Record<FileContextMenuActionId, FileContextMenuItem>>` | `undefined` | Replaces built-in context menu item config. |
+| `getContextMenuItems` | `(file, defaultItems) => FileContextMenuItem[]` | `undefined` | Full low-level override for the context menu. |
+
+## `viewControls`
+
+| Field | Type | Default | Meaning |
+| --- | --- | --- | --- |
+| `showDisplayButton` | `boolean` | `true` | Shows or hides the display button on the right. |
+| `showViewToggleButton` | `boolean` | `true` | Shows or hides the grid / list view toggle. |
+| `showSortOptions` | `boolean` | `true` | Shows or hides sort-by items in the display menu. |
+| `showSortDirectionOptions` | `boolean` | `true` | Shows or hides ascending / descending items. |
+| `showHiddenFileOptions` | `boolean` | `true` | Shows or hides hidden-file controls. |
+| `showTagFilterOption` | `boolean` | `true` | Shows or hides the tag filter section inside the display menu. |
+
+## `features`
+
+| Field | Type | Default | Meaning |
+| --- | --- | --- | --- |
+| `uploadFile` | `boolean` | `true` | Show upload-file action. |
+| `uploadFolder` | `boolean` | `true` | Show upload-folder action. |
+| `newFolder` | `boolean` | `true` | Show create-folder action. |
+| `newFile` | `boolean` | `true` | Show create-text-file action. |
+| `preview` | `boolean` | `true` | Show open / preview action. |
+| `detail` | `boolean` | `true` | Show detail / edit action. |
+| `download` | `boolean` | `true` | Show download action. |
+| `move` | `boolean` | `true` | Show move action. |
+| `copy` | `boolean` | `true` | Show copy action. |
+| `rename` | `boolean` | `true` | Show rename action. |
+| `delete` | `boolean` | `true` | Show delete action. |
+| `tagFilter` | `boolean` | `true` | Show tag filter related UI. |
+
+## Important Notes
+
+- This component is a UI layer, not a storage SDK.
+- Your app is responsible for loading data, creating folders, renaming files, deleting entries, and handling uploads.
+- In transfer dialogs, `source.id` is usually the storage or location id.
+- In `onCreate`, the `source` field is only present when the create action comes from the transfer dialog.

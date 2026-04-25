@@ -152,6 +152,8 @@ export default function FileContent({
     onNavigateBreadcrumb,
     toolbarStyle,
     storageInfo,
+    showBreadcrumbs,
+    showToolbar,
     transferTargets = [],
     dataSource,
     loadDataSourceFolder,
@@ -227,17 +229,21 @@ export default function FileContent({
           <div className="pointer-events-auto relative flex flex-col gap-3">
             <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4">
               <div className="min-w-0">
-                <Breadcrumbs
-                  items={breadcrumbs}
-                  onNavigate={onNavigateBreadcrumb}
-                />
+                {showBreadcrumbs ? (
+                  <Breadcrumbs
+                    items={breadcrumbs}
+                    onNavigate={onNavigateBreadcrumb}
+                  />
+                ) : null}
               </div>
 
               <div className="flex justify-center">
-                <PrimaryToolbar
-                  onAction={actions.dispatch}
-                  selected={selection.selected}
-                />
+                {showToolbar ? (
+                  <PrimaryToolbar
+                    onAction={actions.dispatch}
+                    selected={selection.selected}
+                  />
+                ) : null}
               </div>
 
               <div className="flex min-w-0 justify-end">

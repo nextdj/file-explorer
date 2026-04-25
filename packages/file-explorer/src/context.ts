@@ -9,6 +9,7 @@ import {
   FileExplorerFeatures,
   FileExplorerLocale,
   FileExplorerStorageInfo,
+  FileExplorerViewControls,
   TransferDataSource,
   TransferTarget,
   ToolbarStyle,
@@ -20,6 +21,9 @@ interface FileExplorerContextValue {
   dateFormat: string;
   breadcrumbs?: BreadcrumbItem[];
   storageInfo?: FileExplorerStorageInfo;
+  showBreadcrumbs: boolean;
+  showToolbar: boolean;
+  viewControls: Required<FileExplorerViewControls>;
   transferTargets?: TransferTarget[];
   dataSource?: TransferDataSource[];
   loadDataSourceFolder?: (
@@ -106,6 +110,16 @@ export const FileExplorerContext = createContext<FileExplorerContextValue>({
     rename: true,
     delete: true,
     tagFilter: true,
+  },
+  showBreadcrumbs: true,
+  showToolbar: true,
+  viewControls: {
+    showDisplayButton: true,
+    showViewToggleButton: true,
+    showSortOptions: true,
+    showSortDirectionOptions: true,
+    showHiddenFileOptions: true,
+    showTagFilterOption: true,
   },
   toolbarStyle: "default",
   openFileDetail: () => undefined,

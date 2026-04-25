@@ -5,7 +5,11 @@ import { FileContent, FileDetail } from "./components";
 import { FileExplorerContext } from "./context";
 import { configureUppy, createTranslator, detectPreferredLocale, resolveLocale } from "./lib";
 import { useUploadStore } from "./store/useUploadStore";
-import { FileExplorerFeatures, FileExplorerProps } from "./types";
+import {
+  FileExplorerFeatures,
+  FileExplorerProps,
+  FileExplorerViewControls,
+} from "./types";
 import { FileUploadDialog } from "./components/FileUploadDialog";
 import { useEffect, useState } from "react";
 
@@ -24,6 +28,15 @@ const DEFAULT_FEATURES: Required<FileExplorerFeatures> = {
   tagFilter: true,
 };
 
+const DEFAULT_VIEW_CONTROLS: Required<FileExplorerViewControls> = {
+  showDisplayButton: true,
+  showViewToggleButton: true,
+  showSortOptions: true,
+  showSortDirectionOptions: true,
+  showHiddenFileOptions: true,
+  showTagFilterOption: true,
+};
+
 interface FileUploadState {
   open: boolean;
 }
@@ -38,6 +51,9 @@ export function FileExplorer({
   files,
   breadcrumbs,
   storageInfo,
+  showBreadcrumbs = true,
+  showToolbar = true,
+  viewControls,
   transferTargets,
   dataSource,
   loadDataSourceFolder,
@@ -68,6 +84,7 @@ export function FileExplorer({
   const finalFiles = data?.files ?? files ?? [];
   const finalBreadcrumbs = data?.breadcrumbs ?? breadcrumbs ?? [];
   const resolvedFeatures = { ...DEFAULT_FEATURES, ...features };
+  const resolvedViewControls = { ...DEFAULT_VIEW_CONTROLS, ...viewControls };
   const [resolvedLang, setResolvedLang] = useState(() => resolveLocale(lang));
 
   const [uploadState, setUploadState] = useState<FileUploadState>({
@@ -118,6 +135,9 @@ export function FileExplorer({
           dateFormat,
           breadcrumbs: finalBreadcrumbs,
           storageInfo,
+          showBreadcrumbs,
+          showToolbar,
+          viewControls: resolvedViewControls,
           transferTargets,
           dataSource,
           loadDataSourceFolder,

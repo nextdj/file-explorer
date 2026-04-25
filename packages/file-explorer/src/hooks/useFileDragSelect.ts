@@ -8,6 +8,7 @@ export function useFileDragSelect(
   selected: any[],
   setSelected: (items: any[]) => void,
   containerEl: HTMLElement | null,
+  allowMultiSelect = true,
 ) {
   const isDraggingRef = useRef(false);
   const dragStartSelectedRef = useRef<FileNode[]>([]);
@@ -17,18 +18,21 @@ export function useFileDragSelect(
   useKeyPress(
     "shift",
     (e) => {
+      if (!allowMultiSelect) return;
       shiftPressed.current = e.type === "keydown";
     },
     { events: ["keydown", "keyup"] },
   );
 
   const config = useSelectionContainer({
-    eventsElement: containerEl,
+    eventsElement: allowMultiSelect ? containerEl : null,
     onSelectionStart: () => {
+      if (!allowMultiSelect) return;
       isDraggingRef.current = true;
       dragStartSelectedRef.current = selectedRef.current || [];
     },
     onSelectionChange: (box) => {
+      if (!allowMultiSelect) return;
       const elements =
         document.querySelectorAll<HTMLElement>(".file-selectable");
       const boxIds: string[] = [];

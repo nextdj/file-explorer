@@ -30,7 +30,13 @@ export const FileGridView = ({
   onEditingNameSubmit,
   onEditingNameCancel,
 }: FileViewProps) => {
-  const { t } = useFileExplorerContext();
+  const { t, gridSize } = useFileExplorerContext();
+  const gridColumnsClass =
+    gridSize === "sm"
+      ? "grid-cols-[repeat(auto-fill,minmax(130px,1fr))]"
+      : gridSize === "lg"
+        ? "grid-cols-[repeat(auto-fill,minmax(190px,1fr))]"
+        : "grid-cols-[repeat(auto-fill,minmax(150px,1fr))]";
   const renderItem = (item: any) => {
     const isNew = item.id === newlyCreatedId;
     const active = isSelected(item);
@@ -89,7 +95,7 @@ export const FileGridView = ({
         <div
           className={cn(
             "grid gap-5",
-            "grid-cols-[repeat(auto-fill,minmax(150px,1fr))]",
+            gridColumnsClass,
           )}
         >
           {list.map(renderItem)}

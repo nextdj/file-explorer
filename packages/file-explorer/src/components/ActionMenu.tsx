@@ -76,6 +76,9 @@ export const ActionMenu = ({
     setOpen(nextOpen);
   };
 
+  const hasRenderableContent = (item: ActionMenuConfig) =>
+    Boolean(item.render || item.isHeader || item.label || item.icon || item.action);
+
   return (
     <DropdownMenu.Root open={open} onOpenChange={handleOpenChange}>
       <DropdownMenu.Trigger asChild>
@@ -109,7 +112,12 @@ export const ActionMenu = ({
           )}
 
           <div className="flex flex-col gap-px">
-            {items.map((item, index) => (
+            {items.map((item, index) => {
+              const showSeparator =
+                item.separator &&
+                items.slice(index + 1).some((nextItem) => hasRenderableContent(nextItem));
+
+              return (
               <React.Fragment key={`${item.action}-${index}`}>
                 {item.separator &&
                 !item.render &&
@@ -178,11 +186,11 @@ export const ActionMenu = ({
                     <span className="flex-1 text-left">{item.label}</span>
                   </DropdownMenu.Item>
                 )}
-                {item.separator && (
+                {showSeparator && (
                   <div className="bg-(--_fe-border) mx-2 my-0.75 h-px" />
                 )}
               </React.Fragment>
-            ))}
+            )})}
           </div>
         </DropdownMenu.Content>
       </DropdownMenu.Portal>

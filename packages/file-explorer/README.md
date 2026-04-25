@@ -1,16 +1,25 @@
 # @nextdj/file-explorer
 
-A React file explorer component for app-side integration.
+A React file explorer component designed for app-side integration.
+
+Localized docs:
+
+- [简体中文](./README.zh-CN.md)
+- [日本語](./README.ja.md)
+- [한국어](./README.ko.md)
 
 It supports:
 
-- grid and table views
+- grid and list views
 - breadcrumbs
-- toolbar actions
-- copy / move transfer dialog
+- toolbars
+- transfer dialogs for copy and move
 - uploads
 - context menus
-- app-side create / rename / delete / copy / move callbacks
+- app-side callbacks for create, rename, delete, copy, and move
+- configurable header visibility
+- configurable selection behavior
+- custom list columns with custom sorting
 
 Live demo:
 
@@ -40,9 +49,9 @@ If your project uses `yarn`:
 yarn add @nextdj/file-explorer
 ```
 
-### Step 2: Import the styles
+### Step 2: Import styles
 
-In your global stylesheet, add:
+Add this to your global stylesheet:
 
 ```css
 @import "tailwindcss";
@@ -50,11 +59,9 @@ In your global stylesheet, add:
 @source "../node_modules/@nextdj/file-explorer/dist/**/*.js";
 ```
 
-This tells Tailwind to scan the component package and include the styles it uses.
+This tells Tailwind to scan the package and include the classes used by the component.
 
 ### Step 3: Render the component
-
-The component needs one `data` object:
 
 ```tsx
 import { FileExplorer, type FileExplorerData } from "@nextdj/file-explorer";
@@ -72,8 +79,8 @@ const data: FileExplorerData = {
       id: "file-1",
       name: "brand-guidelines.pdf",
       type: "file",
-      extension: "pdf",
       size: 1843200,
+      extension: "pdf",
       updatedAt: new Date().toISOString(),
       mimeType: "application/pdf",
       mediaType: "file",
@@ -81,14 +88,14 @@ const data: FileExplorerData = {
   ],
 };
 
-export function Example() {
+export default function Page() {
   return <FileExplorer data={data} />;
 }
 ```
 
 ## Smallest Working Example
 
-Use this first if you just want to confirm the component renders:
+Use this first if you only want to confirm the component renders correctly:
 
 ```tsx
 import { FileExplorer, type FileExplorerData } from "@nextdj/file-explorer";
@@ -106,9 +113,9 @@ const data: FileExplorerData = {
       id: "file-1",
       name: "readme.txt",
       type: "file",
-      updatedAt: new Date().toISOString(),
       size: 1024,
       extension: "txt",
+      updatedAt: new Date().toISOString(),
       mimeType: "text/plain",
       mediaType: "file",
     },
@@ -198,6 +205,181 @@ export default function Page() {
 }
 ```
 
+## Callback Example
+
+This example focuses on the most common app-side callbacks:
+
+```tsx
+<FileExplorer
+  data={data}
+  onOpen={(file) => {
+    console.log("open file", file);
+  }}
+  onOpenFolder={(folder) => {
+    console.log("open folder", folder);
+  }}
+  onNavigateBreadcrumb={(item) => {
+    console.log("navigate breadcrumb", item);
+  }}
+  onCreate={async ({ name, type, parentId, source }) => {
+    console.log("create", { name, type, parentId, source });
+    return {
+      id: `created-${Date.now()}`,
+      name,
+      type,
+      parentId,
+    };
+  }}
+  onRename={async ({ id, name }) => {
+    console.log("rename", { id, name });
+  }}
+  onDelete={async (entries) => {
+    console.log("delete", entries);
+  }}
+  onCopy={async ({ entries, destination }) => {
+    console.log("copy", { entries, destination });
+  }}
+  onMove={async ({ entries, destination }) => {
+    console.log("move", { entries, destination });
+  }}
+/>
+```
+
+## Selection and Grid Size
+
+You can disable multi-select and choose a grid size:
+
+```tsx
+<FileExplorer
+  data={data}
+  allowMultiSelect={false}
+  gridSize="lg"
+/>
+```
+
+When `allowMultiSelect={false}`, the component disables:
+
+- Shift range selection
+- Cmd/Ctrl multi-selection
+- drag-to-select
+
+`gridSize` supports:
+
+- `"sm"`
+- `"md"`
+- `"lg"`
+
+## View Mode and Sorting
+
+You can provide defaults:
+
+```tsx
+<FileExplorer
+  data={data}
+  defaultViewMode="list"
+  defaultSortField="updatedAt"
+  defaultSortDirection="desc"
+/>
+```
+
+You can also fully control view mode and sorting from the app:
+
+```tsx
+const [viewMode, setViewMode] = useState<"grid" | "list">("list");
+const [sortField, setSortField] = useState("updatedAt");
+const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+
+<FileExplorer
+  data={data}
+  viewMode={viewMode}
+  onViewModeChange={setViewMode}
+  sortField={sortField}
+  sortDirection={sortDirection}
+  onSortChange={(field, direction) => {
+    setSortField(field);
+    setSortDirection(direction);
+  }}
+/>
+```
+
+## Custom List Columns
+
+You can append custom columns to the built-in list view columns.
+
+Example: add a sortable `Deleted time` column:
+
+```tsx
+<FileExplorer
+  data={data}
+  defaultViewMode="list"
+  listColumns={[
+    {
+      key: "deletedAt",
+      label: "Deleted time",
+      width: "180px",
+      sortable: true,
+      render: (_, record) => record.metadata?.deletedAt ?? "--",
+      sortValue: (record) =>
+        record.metadata?.deletedAt
+          ? new Date(record.metadata.deletedAt).getTime()
+          : 0,
+    },
+  ]}
+/>
+```
+
+Notes:
+
+- Custom columns are appended after the built-in columns and before the action column.
+- If `sortable` is `true`, provide `sortValue(record)` for custom fields that do not exist directly on `FileNode`.
+- Built-in columns such as `name`, `type`, `size`, and `updatedAt` continue to work as before.
+
+## UI Visibility Controls
+
+You can directly control the top area:
+
+```tsx
+<FileExplorer
+  data={data}
+  showBreadcrumbs={true}
+  showToolbar={true}
+  viewControls={{
+    showDisplayButton: true,
+    showViewToggleButton: true,
+    showSortOptions: true,
+    showSortDirectionOptions: true,
+    showHiddenFileOptions: true,
+    showTagFilterOption: true,
+  }}
+/>
+```
+
+## Features
+
+Use `features` to enable or disable built-in actions:
+
+```tsx
+<FileExplorer
+  data={data}
+  features={{
+    uploadFile: true,
+    uploadFolder: true,
+    newFolder: true,
+    newFile: true,
+    preview: true,
+    detail: true,
+    download: true,
+    move: true,
+    copy: true,
+    rename: true,
+    delete: true,
+    tagFilter: true,
+  }}
+/>
+```
+
+If a feature is `false`, related actions are hidden from toolbars and context menus.
+
 ## Data Shape
 
 ### `FileNode`
@@ -250,95 +432,96 @@ type TransferTarget = {
 };
 ```
 
-## UI Visibility Controls
+### `FileListColumn`
 
-You can directly control the top area:
-
-```tsx
-<FileExplorer
-  data={data}
-  showBreadcrumbs={true}
-  showToolbar={true}
-  viewControls={{
-    showDisplayButton: true,
-    showViewToggleButton: true,
-    showSortOptions: true,
-    showSortDirectionOptions: true,
-    showHiddenFileOptions: true,
-    showTagFilterOption: true,
-  }}
-/>
+```ts
+type FileListColumn = {
+  key: keyof FileNode | string | "__actions__";
+  label: React.ReactNode;
+  width?: string;
+  sortable?: boolean;
+  align?: "left" | "center" | "right";
+  render?: (value: any, record: FileNode) => React.ReactNode;
+  sortValue?: (
+    record: FileNode,
+  ) => string | number | Date | null | undefined;
+};
 ```
 
-## Features
+## Core Props
 
-Use `features` to enable or disable built-in actions:
+| Prop | Type | Notes |
+| --- | --- | --- |
+| `data` | `FileExplorerData` | Main input. Recommended. |
+| `files` | `FileNode[]` | Legacy split input. |
+| `breadcrumbs` | `BreadcrumbItem[]` | Legacy split input. |
+| `storageInfo` | `{ totalBytes?: number; availableBytes?: number }` | Shows capacity text below the header. |
+| `lang` | `string` | Sets locale. |
+| `dateFormat` | `string` | Controls formatted date output. |
+| `renderPreview` | `(file) => ReactNode` | Custom preview renderer for grid items. |
+| `renderDetail` | `(file) => ReactNode` | Custom detail panel content. |
 
-```tsx
-<FileExplorer
-  data={data}
-  features={{
-    uploadFile: true,
-    uploadFolder: true,
-    newFolder: true,
-    newFile: true,
-    preview: true,
-    detail: true,
-    download: true,
-    move: true,
-    copy: true,
-    rename: true,
-    delete: true,
-    tagFilter: true,
-  }}
-/>
-```
+## View and Selection Props
 
-If a feature is `false`, related actions are hidden from toolbars and context menus.
+| Prop | Type | Notes |
+| --- | --- | --- |
+| `allowMultiSelect` | `boolean` | Defaults to `true`. |
+| `gridSize` | `"sm" \| "md" \| "lg"` | Grid density. Default is `"md"`. |
+| `defaultViewMode` | `"grid" \| "list"` | Initial view mode. |
+| `viewMode` | `"grid" \| "list"` | Controlled view mode. |
+| `onViewModeChange` | `(mode) => void` | Called when view mode changes. |
+| `defaultSortField` | `keyof FileNode \| string` | Initial sort field. |
+| `defaultSortDirection` | `"asc" \| "desc"` | Initial sort direction. |
+| `sortField` | `keyof FileNode \| string` | Controlled sort field. |
+| `sortDirection` | `"asc" \| "desc"` | Controlled sort direction. |
+| `onSortChange` | `(field, direction) => void` | Called when sorting changes. |
+| `listColumns` | `FileListColumn[]` | Appends custom list columns. |
 
-## Props
+## Header and Feature Props
 
-| Prop | Type | Default | How to use |
-| --- | --- | --- | --- |
-| `data` | `FileExplorerData` | `undefined` | Recommended main input. Pass `{ breadcrumbs, files }`. |
-| `files` | `FileNode[]` | `[]` | Legacy split input. Used when `data` is not passed. |
-| `breadcrumbs` | `BreadcrumbItem[]` | `[]` | Legacy split input. Used when `data` is not passed. |
-| `storageInfo` | `{ totalBytes?: number; availableBytes?: number }` | `undefined` | Shows capacity text below the header. |
-| `showBreadcrumbs` | `boolean` | `true` | Controls whether the breadcrumb area is visible. |
-| `showToolbar` | `boolean` | `true` | Controls whether the center primary toolbar is visible. |
-| `viewControls` | `FileExplorerViewControls` | all `true` | Controls the right-side display button, view toggle, and display menu sections. |
-| `toolbarStyle` | `"default" \| "floating" \| "transparent"` | `"default"` | Controls header style. |
-| `features` | `FileExplorerFeatures` | all `true` | Enables or disables built-in actions. |
-| `lang` | `string` | auto | Sets locale. |
-| `dateFormat` | `string` | `"YYYY/M/D HH:mm:ss"` | Controls formatted date output. |
-| `renderPreview` | `(file) => ReactNode` | `undefined` | Custom preview renderer for grid items. |
-| `renderDetail` | `(file) => ReactNode` | `undefined` | Custom file detail panel content. |
-| `onOpen` | `(file) => void` | `undefined` | Called when opening a file. |
-| `onOpenFolder` | `(folder) => void` | `undefined` | Called when opening a folder in the main explorer. |
-| `onNavigateBreadcrumb` | `(item) => void` | `undefined` | Called when clicking a breadcrumb. |
-| `onTagColorsChange` | `(file, colors) => void` | `undefined` | Called when a file tag color changes. |
-| `onCreate` | `(payload) => Promise<{ id; name; type; parentId? } \| void> \| { id; name; type; parentId? } \| void` | `undefined` | Handles create actions from both the main explorer and the transfer dialog. `source` is present only for transfer dialog creation. |
-| `onRename` | `(payload) => void \| Promise<void>` | `undefined` | Handles rename. |
-| `onDelete` | `(entries) => void \| Promise<void>` | `undefined` | Handles delete / move to trash. |
-| `onCopy` | `({ entries, destination }) => void \| Promise<void>` | `undefined` | Handles copy confirm. |
-| `onMove` | `({ entries, destination }) => void \| Promise<void>` | `undefined` | Handles move confirm. |
-| `uploadOptions` | `FileExplorerUploadOptions` | `undefined` | Configures Uppy upload behavior. |
-| `onUploadStateChange` | `(snapshot) => void` | `undefined` | Lets the app observe upload progress. |
-| `dataSource` | `TransferDataSource[]` | `[]` | Transfer dialog tabs and root targets. |
-| `loadDataSourceFolder` | `(source, target) => Promise<FileExplorerData>` | `undefined` | Loads folders lazily inside the transfer dialog. |
-| `appendContextMenuItems` | `(file) => FileContextMenuItem[]` | `undefined` | Appends extra context menu items. |
-| `hideContextMenuActions` | `(file) => FileContextMenuActionId[]` | `undefined` | Hides built-in context menu items. |
-| `replaceContextMenuActions` | `(file) => Partial<Record<FileContextMenuActionId, FileContextMenuItem>>` | `undefined` | Replaces built-in context menu item config. |
-| `getContextMenuItems` | `(file, defaultItems) => FileContextMenuItem[]` | `undefined` | Full low-level override for the context menu. |
+| Prop | Type | Notes |
+| --- | --- | --- |
+| `showBreadcrumbs` | `boolean` | Controls breadcrumb visibility. |
+| `showToolbar` | `boolean` | Controls center toolbar visibility. |
+| `viewControls` | `FileExplorerViewControls` | Controls right-side buttons and menu sections. |
+| `toolbarStyle` | `"default" \| "floating" \| "transparent"` | Header style. |
+| `features` | `FileExplorerFeatures` | Enables or disables built-in actions. |
+| `uploadOptions` | `FileExplorerUploadOptions` | Configures Uppy upload behavior. |
+| `onUploadStateChange` | `(snapshot) => void` | Observe upload progress. |
+
+## Transfer Dialog Props
+
+| Prop | Type | Notes |
+| --- | --- | --- |
+| `dataSource` | `TransferDataSource[]` | Transfer dialog tabs and root targets. |
+| `loadDataSourceFolder` | `(source, target) => Promise<FileExplorerData>` | Lazy-load folders inside the transfer dialog. |
+
+## Callback Props
+
+| Prop | Type | Notes |
+| --- | --- | --- |
+| `onOpen` | `(file) => void` | Called when opening a file. |
+| `onOpenFolder` | `(folder) => void` | Called when opening a folder. |
+| `onNavigateBreadcrumb` | `(item) => void` | Called when clicking a breadcrumb. |
+| `onTagColorsChange` | `(file, colors) => void` | Called when tag colors change. |
+| `onCreate` | `(payload) => Promise<{ id; name; type; parentId? } \| void> \| { id; name; type; parentId? } \| void` | Handles create in explorer and transfer dialog. |
+| `onRename` | `(payload) => void \| Promise<void>` | Handles rename. |
+| `onDelete` | `(entries) => void \| Promise<void>` | Handles delete or move to trash. |
+| `onCopy` | `({ entries, destination }) => void \| Promise<void>` | Handles copy confirm. |
+| `onMove` | `({ entries, destination }) => void \| Promise<void>` | Handles move confirm. |
+| `appendContextMenuItems` | `(file) => FileContextMenuItem[]` | Appends extra context menu items. |
+| `hideContextMenuActions` | `(file) => FileContextMenuActionId[]` | Hides built-in context menu items. |
+| `replaceContextMenuActions` | `(file) => Partial<Record<FileContextMenuActionId, FileContextMenuItem>>` | Replaces built-in context menu items. |
+| `getContextMenuItems` | `(file, defaultItems) => FileContextMenuItem[]` | Full low-level context menu override. |
 
 ## `viewControls`
 
 | Field | Type | Default | Meaning |
 | --- | --- | --- | --- |
 | `showDisplayButton` | `boolean` | `true` | Shows or hides the display button on the right. |
-| `showViewToggleButton` | `boolean` | `true` | Shows or hides the grid / list view toggle. |
+| `showViewToggleButton` | `boolean` | `true` | Shows or hides the grid/list view toggle. |
 | `showSortOptions` | `boolean` | `true` | Shows or hides sort-by items in the display menu. |
-| `showSortDirectionOptions` | `boolean` | `true` | Shows or hides ascending / descending items. |
+| `showSortDirectionOptions` | `boolean` | `true` | Shows or hides ascending/descending items. |
 | `showHiddenFileOptions` | `boolean` | `true` | Shows or hides hidden-file controls. |
 | `showTagFilterOption` | `boolean` | `true` | Shows or hides the tag filter section inside the display menu. |
 
@@ -350,18 +533,18 @@ If a feature is `false`, related actions are hidden from toolbars and context me
 | `uploadFolder` | `boolean` | `true` | Show upload-folder action. |
 | `newFolder` | `boolean` | `true` | Show create-folder action. |
 | `newFile` | `boolean` | `true` | Show create-text-file action. |
-| `preview` | `boolean` | `true` | Show open / preview action. |
-| `detail` | `boolean` | `true` | Show detail / edit action. |
+| `preview` | `boolean` | `true` | Show open or preview action. |
+| `detail` | `boolean` | `true` | Show detail or edit action. |
 | `download` | `boolean` | `true` | Show download action. |
 | `move` | `boolean` | `true` | Show move action. |
 | `copy` | `boolean` | `true` | Show copy action. |
 | `rename` | `boolean` | `true` | Show rename action. |
 | `delete` | `boolean` | `true` | Show delete action. |
-| `tagFilter` | `boolean` | `true` | Show tag filter related UI. |
+| `tagFilter` | `boolean` | `true` | Show tag-filter-related UI. |
 
 ## Important Notes
 
 - This component is a UI layer, not a storage SDK.
 - Your app is responsible for loading data, creating folders, renaming files, deleting entries, and handling uploads.
 - In transfer dialogs, `source.id` is usually the storage or location id.
-- In `onCreate`, the `source` field is only present when the create action comes from the transfer dialog.
+- In `onCreate`, the `source` field is present only when the create action comes from the transfer dialog.

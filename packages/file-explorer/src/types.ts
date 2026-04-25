@@ -52,6 +52,21 @@ export interface FileNode {
   metadata?: Record<string, any>;
   tagColors?: CategoryColor[];
 }
+
+export type FileViewMode = "grid" | "list";
+export type FileSortDirection = "asc" | "desc";
+export type FileSortField = keyof FileNode | string;
+
+export interface FileListColumn {
+  key: FileSortField | "__actions__";
+  label: ReactNode;
+  width?: string;
+  sortable?: boolean;
+  align?: "left" | "center" | "right";
+  render?: (value: any, record: FileNode) => ReactNode;
+  sortValue?: (record: FileNode) => string | number | Date | null | undefined;
+}
+
 export interface FileContextMenuItem {
   label?: ReactNode;
   action?: string;
@@ -146,6 +161,17 @@ export interface FileExplorerProps {
   files?: FileNode[];
   breadcrumbs?: BreadcrumbItem[];
   storageInfo?: FileExplorerStorageInfo;
+  allowMultiSelect?: boolean;
+  gridSize?: "sm" | "md" | "lg";
+  defaultViewMode?: FileViewMode;
+  viewMode?: FileViewMode;
+  onViewModeChange?: (mode: FileViewMode) => void;
+  defaultSortField?: FileSortField;
+  defaultSortDirection?: FileSortDirection;
+  sortField?: FileSortField;
+  sortDirection?: FileSortDirection;
+  onSortChange?: (field: FileSortField, direction: FileSortDirection) => void;
+  listColumns?: FileListColumn[];
   showBreadcrumbs?: boolean;
   showToolbar?: boolean;
   viewControls?: FileExplorerViewControls;
@@ -332,8 +358,8 @@ export interface FileViewProps {
   selected: FileNode[]; // Mirrors the object-array shape returned by the selection hook.
   isSelected: (item: FileNode) => boolean;
   onItemClick: (e: React.MouseEvent, item: FileNode, index: number) => void;
-  onSortAction?: (key: keyof FileNode) => void;
-  sortConfig?: { key: string; dir: "asc" | "desc" };
+  onSortAction?: (key: FileSortField) => void;
+  sortConfig?: { key: FileSortField; dir: FileSortDirection };
   newlyCreatedId?: string | null;
   editingItemId?: string | null;
   editingName?: string;

@@ -7,9 +7,13 @@ import {
   FileContextMenuActionId,
   FileNode,
   FileExplorerFeatures,
+  FileListColumn,
   FileExplorerLocale,
   FileExplorerStorageInfo,
   FileExplorerViewControls,
+  FileSortDirection,
+  FileSortField,
+  FileViewMode,
   TransferDataSource,
   TransferTarget,
   ToolbarStyle,
@@ -21,6 +25,17 @@ interface FileExplorerContextValue {
   dateFormat: string;
   breadcrumbs?: BreadcrumbItem[];
   storageInfo?: FileExplorerStorageInfo;
+  allowMultiSelect: boolean;
+  gridSize: "sm" | "md" | "lg";
+  defaultViewMode: FileViewMode;
+  viewMode?: FileViewMode;
+  onViewModeChange?: (mode: FileViewMode) => void;
+  defaultSortField: FileSortField;
+  defaultSortDirection: FileSortDirection;
+  sortField?: FileSortField;
+  sortDirection?: FileSortDirection;
+  onSortChange?: (field: FileSortField, direction: FileSortDirection) => void;
+  listColumns?: FileListColumn[];
   showBreadcrumbs: boolean;
   showToolbar: boolean;
   viewControls: Required<FileExplorerViewControls>;
@@ -97,6 +112,11 @@ export const FileExplorerContext = createContext<FileExplorerContextValue>({
   lang: "en",
   t: createTranslator("en"),
   dateFormat: "YYYY/M/D HH:mm:ss",
+  allowMultiSelect: true,
+  gridSize: "md",
+  defaultViewMode: "grid",
+  defaultSortField: "name",
+  defaultSortDirection: "asc",
   features: {
     uploadFile: true,
     uploadFolder: true,

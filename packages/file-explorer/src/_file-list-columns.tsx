@@ -3,6 +3,7 @@ import {
   CategoryColor,
   FileExplorerFeatures,
   FileAction,
+  FileListColumn,
   FileNode,
 } from "./types";
 import {
@@ -44,11 +45,32 @@ export const getFileListColumns = (
     file: FileNode,
     defaultItems: FileContextMenuItem[],
   ) => FileContextMenuItem[],
+  customColumns: FileListColumn[] = [],
   locale?: string,
   t: (key: string, vars?: Record<string, string | number>) => string = (key) =>
     key,
-): DataTableHeader<FileNode>[] => [
-  {
+): DataTableHeader<FileNode>[] => {
+  const customListColumns: DataTableHeader<FileNode>[] = customColumns
+    .filter((column) => column.key !== "__actions__")
+    .map((column) => ({
+      key: column.key,
+      label: column.label,
+      width: column.width,
+      sortable: column.sortable,
+      align: column.align,
+      render: column.render
+        ? (value, record) => column.render?.(value, record)
+        : (value, record) => (
+            <span className="text-(--_fe-text-muted)">
+              {value ??
+                record.metadata?.[String(column.key)] ??
+                "--"}
+            </span>
+          ),
+    }));
+
+  return [
+    {
     key: "name",
     label: t("list.column.name"),
     sortable: true,
@@ -99,95 +121,97 @@ export const getFileListColumns = (
         </div>
       );
     },
-  },
+    },
 
-  {
-    key: "type",
-    label: t("list.column.type"),
-    width: "120px",
-    sortable: true,
-    render: (_, record) => (
-      <span className="text-(--_fe-text-muted)">
-        {getFileCategoryLabel(record, locale)}
-      </span>
-    ),
-  },
-  {
-    key: "size",
-    label: t("list.column.size"),
-    width: "120px",
-    sortable: true,
+    {
+      key: "type",
+      label: t("list.column.type"),
+      width: "120px",
+      sortable: true,
+      render: (_, record) => (
+        <span className="text-(--_fe-text-muted)">
+          {getFileCategoryLabel(record, locale)}
+        </span>
+      ),
+    },
+    {
+      key: "size",
+      label: t("list.column.size"),
+      width: "120px",
+      sortable: true,
 
-    render: (v, record) => (
-      <span className="text-(--_fe-text-muted)">
-        {record.type === "folder" ? "--" : bytesFormat(v)}
-      </span>
-    ),
-  },
-  {
-    key: "updatedAt",
-    label: t("list.column.updatedAt"),
-    width: "180px",
-    sortable: true,
+      render: (v, record) => (
+        <span className="text-(--_fe-text-muted)">
+          {record.type === "folder" ? "--" : bytesFormat(v)}
+        </span>
+      ),
+    },
+    {
+      key: "updatedAt",
+      label: t("list.column.updatedAt"),
+      width: "180px",
+      sortable: true,
 
-    render: (v) => (
-      <span className="text-(--_fe-text-muted)">{formatDateTime(v)}</span>
-    ),
-  },
-  {
-    key: "__actions__",
-    label: "",
-    width: "100px",
-    align: "right",
-    render: (_, record) => (
-      <div className="flex items-center justify-end opacity-0 transition-opacity group-hover:opacity-100">
-        {/* Quick delete */}
-        <Button
-          variant="ghost"
-          size="sm"
-          isDelete
-          onClick={(e) => {
-            e.stopPropagation();
-            onAction("delete", record);
-          }}
-        />
-        {/* Overflow menu */}
-        <ActionMenu
-          mode="left-click"
-          items={resolveContextMenuItems(
-            record,
-            composeContextMenuItems(
+      render: (v) => (
+        <span className="text-(--_fe-text-muted)">{formatDateTime(v)}</span>
+      ),
+    },
+    ...customListColumns,
+    {
+      key: "__actions__",
+      label: "",
+      width: "100px",
+      align: "right",
+      render: (_, record) => (
+        <div className="flex items-center justify-end opacity-0 transition-opacity group-hover:opacity-100">
+          {/* Quick delete */}
+          <Button
+            variant="ghost"
+            size="sm"
+            isDelete
+            onClick={(e) => {
+              e.stopPropagation();
+              onAction("delete", record);
+            }}
+          />
+          {/* Overflow menu */}
+          <ActionMenu
+            mode="left-click"
+            items={resolveContextMenuItems(
               record,
-              buildDefaultContextMenuItems(record, onTagColorsChange, {
-                t,
-                preview: features?.preview,
-                download: features?.download,
-                detail: features?.detail,
-                move: features?.move,
-                copy: features?.copy,
-                rename: features?.rename,
-                delete: features?.delete,
-                tagFilter: features?.tagFilter,
-              }),
-              {
-                appendItems: appendContextMenuItems?.(record),
-                hideActions: hideContextMenuActions?.(record),
-                replaceActions: replaceContextMenuActions?.(record),
-                getContextMenuItems,
-              },
-            ),
-          )}
-          onAction={(id) => onAction(id as FileAction, record)}
-          trigger={
-            <Button
-              variant="ghost"
-              size="sm"
-              icon={MoreVertical}
-              onClick={(e) => e.stopPropagation()}
-            />
-          }
-        />
-      </div>
-    ),
-  },
-];
+              composeContextMenuItems(
+                record,
+                buildDefaultContextMenuItems(record, onTagColorsChange, {
+                  t,
+                  preview: features?.preview,
+                  download: features?.download,
+                  detail: features?.detail,
+                  move: features?.move,
+                  copy: features?.copy,
+                  rename: features?.rename,
+                  delete: features?.delete,
+                  tagFilter: features?.tagFilter,
+                }),
+                {
+                  appendItems: appendContextMenuItems?.(record),
+                  hideActions: hideContextMenuActions?.(record),
+                  replaceActions: replaceContextMenuActions?.(record),
+                  getContextMenuItems,
+                },
+              ),
+            )}
+            onAction={(id) => onAction(id as FileAction, record)}
+            trigger={
+              <Button
+                variant="ghost"
+                size="sm"
+                icon={MoreVertical}
+                onClick={(e) => e.stopPropagation()}
+              />
+            }
+          />
+        </div>
+      ),
+    },
+  ];
+};

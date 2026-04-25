@@ -21,10 +21,19 @@ export function useFileScene(filesData: FileNode[], currentFolderId: string) {
     setNewlyCreatedId(null);
   }, [currentFolderId]);
 
-  const { lang } = useFileExplorerContext();
-  const explorer = useExplorerState(localFiles, lang);
   const {
+    lang,
+    defaultViewMode,
+    viewMode,
+    onViewModeChange,
+    defaultSortField,
+    defaultSortDirection,
+    sortField,
+    sortDirection,
+    onSortChange,
+    listColumns,
     t,
+    allowMultiSelect,
     onOpen,
     onOpenFolder,
     onTagColorsChange,
@@ -35,6 +44,26 @@ export function useFileScene(filesData: FileNode[], currentFolderId: string) {
     onCopy,
     onMove,
   } = useFileExplorerContext();
+  const sortAccessors = useMemo(
+    () =>
+      Object.fromEntries(
+        (listColumns ?? [])
+          .filter((column) => Boolean(column.sortValue))
+          .map((column) => [String(column.key), column.sortValue!]),
+      ),
+    [listColumns],
+  );
+  const explorer = useExplorerState(localFiles, lang, {
+    defaultViewMode,
+    viewMode,
+    onViewModeChange,
+    defaultSortField,
+    defaultSortDirection,
+    sortField,
+    sortDirection,
+    onSortChange,
+    sortAccessors,
+  });
 
   const addStickyItem = useCallback((id: string) => {
     setStickyIds((prev) => [id, ...prev]);
@@ -73,6 +102,7 @@ export function useFileScene(filesData: FileNode[], currentFolderId: string) {
   const selection = useFileSelector<FileNode>(
     finalDisplayFiles,
     currentFolderId,
+    allowMultiSelect,
   );
 
   const actions = useFileActions(
@@ -95,6 +125,7 @@ export function useFileScene(filesData: FileNode[], currentFolderId: string) {
     selection.selected,
     selection.setSelected,
     container,
+    allowMultiSelect,
   );
 
   const scrollRef = useCallback((node: HTMLDivElement | null) => {
@@ -140,16 +171,16 @@ export function useFileScene(filesData: FileNode[], currentFolderId: string) {
     isSelected: selection.isSelected,
     onItemClick: selection.handleItemClick,
     onAction: actions.dispatch,
-    onSortAction: (key: keyof FileNode) => {
+    onSortAction: (key: string) => {
       if (explorer.sort.field === key) {
-        explorer.sort.setDirection(
+        explorer.sort.set(
+          key,
           explorer.sort.direction === "asc" ? "desc" : "asc",
         );
         return;
       }
 
-      explorer.sort.setField(key);
-      explorer.sort.setDirection("asc");
+      explorer.sort.set(key, "asc");
     },
     onDoubleClick: handleItemDoubleClick,
     onTagColorsChange: handleTagColorsChange,

@@ -46,7 +46,7 @@ const getRadiusClass = (
 
 /* ===== Types ===== */
 export interface DataTableHeader<T> {
-  key: keyof T | "__selection__" | "__actions__";
+  key: keyof T | string | "__selection__" | "__actions__";
   label: React.ReactNode;
   width?: string;
   sortable?: boolean;
@@ -58,7 +58,7 @@ interface DataTableProps<T extends { id: number | string }> {
   headers: DataTableHeader<T>[];
   data: T[];
   sortConfig?: { key: string; dir: "asc" | "desc" };
-  onSortAction?: (key: keyof T) => void;
+  onSortAction?: (key: keyof T | string) => void;
   onRowClickAction?: (e: React.MouseEvent, row: T, index: number) => void;
   onRowDoubleClickAction?: (e: React.MouseEvent, row: T, index: number) => void;
   onRowContextMenu?: (e: React.MouseEvent, row: T, index: number) => void;

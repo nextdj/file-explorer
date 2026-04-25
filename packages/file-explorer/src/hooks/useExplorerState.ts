@@ -1,17 +1,60 @@
 import { useMemo, useState } from "react";
-import { CategoryColor, FileNode } from "../types";
+import {
+  CategoryColor,
+  FileNode,
+  FileSortDirection,
+  FileSortField,
+  FileViewMode,
+} from "../types";
 import { performSort } from "../lib";
 import { FILE_CATEGORY_COLORS } from "../constants/colors";
 import { getFileCategoryLabel } from "../lib/file-utils";
 
-export function useExplorerState(files: FileNode[], locale?: string) {
-  const [viewMode, setViewMode] = useState("grid");
-  const [sortField, setSortField] = useState<keyof FileNode>("name");
-  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
+interface ExplorerStateOptions {
+  defaultViewMode?: FileViewMode;
+  viewMode?: FileViewMode;
+  onViewModeChange?: (mode: FileViewMode) => void;
+  defaultSortField?: FileSortField;
+  defaultSortDirection?: FileSortDirection;
+  sortField?: FileSortField;
+  sortDirection?: FileSortDirection;
+  onSortChange?: (field: FileSortField, direction: FileSortDirection) => void;
+  sortAccessors?: Record<
+    string,
+    (file: FileNode) => string | number | Date | null | undefined
+  >;
+}
+
+export function useExplorerState(
+  files: FileNode[],
+  locale?: string,
+  options: ExplorerStateOptions = {},
+) {
+  const {
+    defaultViewMode = "grid",
+    viewMode,
+    onViewModeChange,
+    defaultSortField = "name",
+    defaultSortDirection = "asc",
+    sortField,
+    sortDirection,
+    onSortChange,
+    sortAccessors = {},
+  } = options;
+  const [internalViewMode, setInternalViewMode] =
+    useState<FileViewMode>(defaultViewMode);
+  const [internalSortField, setInternalSortField] =
+    useState<FileSortField>(defaultSortField);
+  const [internalSortDirection, setInternalSortDirection] =
+    useState<FileSortDirection>(defaultSortDirection);
   const [showHidden, setShowHidden] = useState(false);
   const [selectedColors, setSelectedColors] = useState<CategoryColor[]>(
     Object.keys(FILE_CATEGORY_COLORS) as CategoryColor[],
   );
+
+  const resolvedViewMode = viewMode ?? internalViewMode;
+  const resolvedSortField = sortField ?? internalSortField;
+  const resolvedSortDirection = sortDirection ?? internalSortDirection;
 
   // Apply the base hidden-file filter first.
   const baseFilteredFiles = useMemo(() => {
@@ -34,7 +77,7 @@ export function useExplorerState(files: FileNode[], locale?: string) {
   }, [baseFilteredFiles, selectedColors]);
 
   const sortedFiles = useMemo(() => {
-    if (sortField === "type") {
+    if (resolvedSortField === "type") {
       return [...finalFilteredFiles].sort((a, b) => {
         const labelA = getFileCategoryLabel(a, locale);
         const labelB = getFileCategoryLabel(b, locale);
@@ -43,12 +86,46 @@ export function useExplorerState(files: FileNode[], locale?: string) {
           sensitivity: "accent",
         });
 
-        return sortDirection === "asc" ? result : -result;
+        return resolvedSortDirection === "asc" ? result : -result;
       });
     }
 
-    const sortByField = (items: FileNode[]) =>
-      performSort(items, sortField, sortDirection);
+    const sortAccessor = sortAccessors[String(resolvedSortField)];
+    const sortByField = (items: FileNode[]) => {
+      if (sortAccessor) {
+        return [...items].sort((a, b) => {
+          const valueA = sortAccessor(a);
+          const valueB = sortAccessor(b);
+
+          if (valueA === valueB) return 0;
+          if (valueA === null || valueA === undefined) return 1;
+          if (valueB === null || valueB === undefined) return -1;
+
+          if (typeof valueA === "string" && typeof valueB === "string") {
+            const result = valueA.localeCompare(valueB, locale, {
+              numeric: true,
+              sensitivity: "accent",
+            });
+
+            return resolvedSortDirection === "asc" ? result : -result;
+          }
+
+          const normalizedA =
+            valueA instanceof Date ? valueA.getTime() : valueA;
+          const normalizedB =
+            valueB instanceof Date ? valueB.getTime() : valueB;
+          const result = normalizedA > normalizedB ? 1 : -1;
+
+          return resolvedSortDirection === "asc" ? result : -result;
+        });
+      }
+
+      return performSort(
+        items,
+        resolvedSortField as keyof FileNode,
+        resolvedSortDirection,
+      );
+    };
 
     const folders = sortByField(
       finalFilteredFiles.filter((file) => file.type === "folder"),
@@ -58,19 +135,54 @@ export function useExplorerState(files: FileNode[], locale?: string) {
     );
 
     return [...folders, ...files];
-  }, [finalFilteredFiles, locale, sortField, sortDirection]);
+  }, [
+    finalFilteredFiles,
+    locale,
+    resolvedSortDirection,
+    resolvedSortField,
+    sortAccessors,
+  ]);
+
+  const applyViewMode = (nextViewMode: FileViewMode) => {
+    if (viewMode === undefined) {
+      setInternalViewMode(nextViewMode);
+    }
+    onViewModeChange?.(nextViewMode);
+  };
+
+  const applySort = (
+    nextSortField: FileSortField,
+    nextSortDirection: FileSortDirection,
+  ) => {
+    if (sortField === undefined) {
+      setInternalSortField(nextSortField);
+    }
+    if (sortDirection === undefined) {
+      setInternalSortDirection(nextSortDirection);
+    }
+    onSortChange?.(nextSortField, nextSortDirection);
+  };
+
+  const setSortField = (nextSortField: FileSortField) => {
+    applySort(nextSortField, resolvedSortDirection);
+  };
+
+  const setSortDirection = (nextSortDirection: FileSortDirection) => {
+    applySort(resolvedSortField, nextSortDirection);
+  };
 
   return {
     files: sortedFiles,
     view: {
-      mode: viewMode,
-      setMode: setViewMode,
+      mode: resolvedViewMode,
+      setMode: applyViewMode,
     },
     sort: {
-      field: sortField,
-      direction: sortDirection,
+      field: resolvedSortField,
+      direction: resolvedSortDirection,
       setField: setSortField,
       setDirection: setSortDirection,
+      set: applySort,
     },
     filter: {
       showHidden,

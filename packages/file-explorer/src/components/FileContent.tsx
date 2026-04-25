@@ -154,6 +154,8 @@ export default function FileContent({
     storageInfo,
     showBreadcrumbs,
     showToolbar,
+    features,
+    viewControls,
     transferTargets = [],
     dataSource,
     loadDataSourceFolder,
@@ -183,6 +185,19 @@ export default function FileContent({
             .join(" · ")
         : "";
 
+  const hasBreadcrumbs = showBreadcrumbs && breadcrumbs.length > 0;
+  const hasDisplayMenu =
+    viewControls.showDisplayButton &&
+    (viewControls.showSortOptions ||
+      viewControls.showSortDirectionOptions ||
+      viewControls.showHiddenFileOptions ||
+      (features.tagFilter && viewControls.showTagFilterOption));
+  const hasRightControls =
+    hasDisplayMenu || viewControls.showViewToggleButton;
+  const hasHeaderControls = hasBreadcrumbs || showToolbar || hasRightControls;
+  const showHeaderMeta = hasHeaderControls && Boolean(headerMeta);
+  const showHeader = hasHeaderControls || showHeaderMeta;
+
   const headerShellClass = cn(
     "pointer-events-none absolute top-0 left-0 z-30",
     toolbarStyle === "floating" ? "right-6 pt-4" : "right-0",
@@ -205,11 +220,14 @@ export default function FileContent({
   );
 
   const scrollViewportClass = cn(
-    toolbarStyle === "default" ? "pt-0" : "pt-32",
-    toolbarStyle === "floating" && "pt-36",
+    showHeader &&
+      (toolbarStyle === "default" ? "pt-0" : "pt-32"),
+    showHeader && toolbarStyle === "floating" && "pt-36",
   );
 
-  const scrollAreaClass = cn(toolbarStyle === "default" && "mt-25");
+  const scrollAreaClass = cn(
+    showHeader && toolbarStyle === "default" && "mt-25",
+  );
 
   return (
     <div
@@ -221,51 +239,59 @@ export default function FileContent({
         if (!isDraggingRef.current && !isMenu) selection.unSelectAll();
       }}
     >
-      <div className={headerShellClass}>
-        <DragSelection />
-        <div className={headerBarClass}>
-          <div className={headerSurfaceClass} />
-          {/* Keep the header inline so the layout is readable in one file. */}
-          <div className="pointer-events-auto relative flex flex-col gap-3">
-            <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4">
-              <div className="min-w-0">
-                {showBreadcrumbs ? (
-                  <Breadcrumbs
-                    items={breadcrumbs}
-                    onNavigate={onNavigateBreadcrumb}
-                  />
-                ) : null}
-              </div>
+      <DragSelection />
+      {showHeader ? (
+        <div className={headerShellClass}>
+          <div className={headerBarClass}>
+            <div className={headerSurfaceClass} />
+            {/* Keep the header inline so the layout is readable in one file. */}
+            <div className="pointer-events-auto relative flex flex-col gap-3">
+              {hasHeaderControls ? (
+                <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4">
+                  <div className="min-w-0">
+                    {hasBreadcrumbs ? (
+                      <Breadcrumbs
+                        items={breadcrumbs}
+                        onNavigate={onNavigateBreadcrumb}
+                      />
+                    ) : null}
+                  </div>
 
-              <div className="flex justify-center">
-                {showToolbar ? (
-                  <PrimaryToolbar
-                    onAction={actions.dispatch}
-                    selected={selection.selected}
-                  />
-                ) : null}
-              </div>
+                  <div className="flex justify-center">
+                    {showToolbar ? (
+                      <PrimaryToolbar
+                        onAction={actions.dispatch}
+                        selected={selection.selected}
+                      />
+                    ) : null}
+                  </div>
 
-              <div className="flex min-w-0 justify-end">
-                <div className="flex items-center justify-center">
-                  <ViewToolbar
-                    explorer={explorer}
-                    selection={selection}
-                    onBatchAction={actions.dispatch}
-                    onAction={actions.dispatch}
-                    showCreateAction={false}
-                    showSelectionActions={false}
-                  />
+                  <div className="flex min-w-0 justify-end">
+                    {hasRightControls ? (
+                      <div className="flex items-center justify-center">
+                        <ViewToolbar
+                          explorer={explorer}
+                          selection={selection}
+                          onBatchAction={actions.dispatch}
+                          onAction={actions.dispatch}
+                          showCreateAction={false}
+                          showSelectionActions={false}
+                        />
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
-              </div>
-            </div>
+              ) : null}
 
-            <div className="text-(--_fe-text-muted) min-h-5 text-sm">
-              {headerMeta}
+              {showHeaderMeta ? (
+                <div className="text-(--_fe-text-muted) text-sm">
+                  {headerMeta}
+                </div>
+              ) : null}
             </div>
           </div>
         </div>
-      </div>
+      ) : null}
 
       <ScrollArea
         ref={scrollRef}

@@ -4,6 +4,7 @@ import { useSelections } from "ahooks";
 export function useFileSelector<T extends { id: string }>(
   items: T[],
   resetKey?: string,
+  allowMultiSelect = true,
 ) {
   const selections = useSelections(items);
   const [lastIndex, setLastIndex] = useState<number | null>(null);
@@ -15,6 +16,7 @@ export function useFileSelector<T extends { id: string }>(
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "a") {
+        if (!allowMultiSelect) return;
         const isInput =
           e.target instanceof HTMLInputElement ||
           e.target instanceof HTMLTextAreaElement;
@@ -26,7 +28,7 @@ export function useFileSelector<T extends { id: string }>(
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [selections]);
+  }, [allowMultiSelect, selections]);
 
   useEffect(() => {
     selectionsRef.current.unSelectAll();
@@ -36,7 +38,10 @@ export function useFileSelector<T extends { id: string }>(
   const handleItemClick = useCallback(
     (e: React.MouseEvent, item: T, index: number) => {
       e.stopPropagation();
-      if (e.shiftKey && lastIndex !== null) {
+      if (!allowMultiSelect) {
+        selections.unSelectAll();
+        selections.select(item);
+      } else if (e.shiftKey && lastIndex !== null) {
         const start = Math.min(lastIndex, index);
         const end = Math.max(lastIndex, index);
         items.slice(start, end + 1).forEach((i) => selections.select(i));
@@ -48,7 +53,7 @@ export function useFileSelector<T extends { id: string }>(
       }
       setLastIndex(index);
     },
-    [items, lastIndex, selections],
+    [allowMultiSelect, items, lastIndex, selections],
   );
 
   return { ...selections, handleItemClick };

@@ -222,6 +222,79 @@ export default function Page() {
 - 自定义列会追加在默认列后面、操作列前面。
 - 如果自定义字段需要排序，建议传 `sortValue(record)`。
 
+如果你想完整接管默认列，建议使用 `getListColumns`。
+
+比如：隐藏 `size`、调整顺序、再新增一个“删除时间”列：
+
+```tsx
+<FileExplorer
+  data={data}
+  defaultViewMode="list"
+  getListColumns={(defaultColumns) => {
+    const name = defaultColumns.find((col) => col.key === "name")!;
+    const type = defaultColumns.find((col) => col.key === "type")!;
+    const updatedAt = defaultColumns.find((col) => col.key === "updatedAt")!;
+    const actions = defaultColumns.find((col) => col.key === "__actions__")!;
+
+    return [
+      name,
+      {
+        key: "deletedAt",
+        label: "删除时间",
+        width: "180px",
+        sortable: true,
+        render: (_, record) => record.metadata?.deletedAt ?? "--",
+        sortValue: (record) =>
+          record.metadata?.deletedAt
+            ? new Date(record.metadata.deletedAt).getTime()
+            : 0,
+      },
+      type,
+      updatedAt,
+      actions,
+    ];
+  }}
+/>
+```
+
+默认的操作列也包含在 `defaultColumns` 里，它的 `key` 是 `__actions__`，所以你也可以删除、移动或替换它。
+
+例如：彻底删除操作列
+
+```tsx
+<FileExplorer
+  data={data}
+  defaultViewMode="list"
+  getListColumns={(defaultColumns) =>
+    defaultColumns.filter((col) => col.key !== "__actions__")
+  }
+/>
+```
+
+例如：用你自己的按钮替换操作列
+
+```tsx
+<FileExplorer
+  data={data}
+  defaultViewMode="list"
+  getListColumns={(defaultColumns) =>
+    defaultColumns.map((col) =>
+      col.key === "__actions__"
+        ? {
+            ...col,
+            width: "120px",
+            render: (_, record) => (
+              <button onClick={() => console.log("自定义操作", record)}>
+                自定义
+              </button>
+            ),
+          }
+        : col,
+    )
+  }
+/>
+```
+
 ## 头部显示控制
 
 ```tsx
@@ -268,6 +341,7 @@ export default function Page() {
 | `sortDirection` | `"asc" \| "desc"` | 受控排序方向。 |
 | `onSortChange` | `(field, direction) => void` | 排序变化回调。 |
 | `listColumns` | `FileListColumn[]` | 追加自定义列表列。 |
+| `getListColumns` | `(defaultColumns) => FileListColumn[]` | 完整控制默认列表列。 |
 
 ## 头部与功能参数
 

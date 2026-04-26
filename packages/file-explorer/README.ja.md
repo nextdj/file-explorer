@@ -216,6 +216,79 @@ export default function Page() {
 />
 ```
 
+組み込み列を丸ごと制御したい場合は `getListColumns` を使ってください。
+
+例: `size` を非表示にして順序を並べ替え、さらに `Deleted time` を追加する:
+
+```tsx
+<FileExplorer
+  data={data}
+  defaultViewMode="list"
+  getListColumns={(defaultColumns) => {
+    const name = defaultColumns.find((col) => col.key === "name")!;
+    const type = defaultColumns.find((col) => col.key === "type")!;
+    const updatedAt = defaultColumns.find((col) => col.key === "updatedAt")!;
+    const actions = defaultColumns.find((col) => col.key === "__actions__")!;
+
+    return [
+      name,
+      {
+        key: "deletedAt",
+        label: "Deleted time",
+        width: "180px",
+        sortable: true,
+        render: (_, record) => record.metadata?.deletedAt ?? "--",
+        sortValue: (record) =>
+          record.metadata?.deletedAt
+            ? new Date(record.metadata.deletedAt).getTime()
+            : 0,
+      },
+      type,
+      updatedAt,
+      actions,
+    ];
+  }}
+/>
+```
+
+組み込みのアクション列も `defaultColumns` に含まれています。`key` は `__actions__` なので、削除・移動・置き換えができます。
+
+例: アクション列を完全に削除する:
+
+```tsx
+<FileExplorer
+  data={data}
+  defaultViewMode="list"
+  getListColumns={(defaultColumns) =>
+    defaultColumns.filter((col) => col.key !== "__actions__")
+  }
+/>
+```
+
+例: アクション列を独自ボタンに置き換える:
+
+```tsx
+<FileExplorer
+  data={data}
+  defaultViewMode="list"
+  getListColumns={(defaultColumns) =>
+    defaultColumns.map((col) =>
+      col.key === "__actions__"
+        ? {
+            ...col,
+            width: "120px",
+            render: (_, record) => (
+              <button onClick={() => console.log("custom action", record)}>
+                Custom
+              </button>
+            ),
+          }
+        : col,
+    )
+  }
+/>
+```
+
 ## ヘッダー表示制御
 
 ```tsx
@@ -258,6 +331,7 @@ export default function Page() {
 | `sortDirection` | `"asc" \| "desc"` | 制御されたソート方向。 |
 | `onSortChange` | `(field, direction) => void` | ソート変更時のコールバック。 |
 | `listColumns` | `FileListColumn[]` | カスタムリスト列を追加します。 |
+| `getListColumns` | `(defaultColumns) => FileListColumn[]` | 組み込みリスト列を完全に制御します。 |
 
 ## ヘッダーと機能 Props
 

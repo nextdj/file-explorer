@@ -334,6 +334,79 @@ Notes:
 - If `sortable` is `true`, provide `sortValue(record)` for custom fields that do not exist directly on `FileNode`.
 - Built-in columns such as `name`, `type`, `size`, and `updatedAt` continue to work as before.
 
+If you want full control over the built-in columns, use `getListColumns` instead.
+
+Example: hide `size`, move `updatedAt`, and add a custom `Deleted time` column:
+
+```tsx
+<FileExplorer
+  data={data}
+  defaultViewMode="list"
+  getListColumns={(defaultColumns) => {
+    const name = defaultColumns.find((col) => col.key === "name")!;
+    const type = defaultColumns.find((col) => col.key === "type")!;
+    const updatedAt = defaultColumns.find((col) => col.key === "updatedAt")!;
+    const actions = defaultColumns.find((col) => col.key === "__actions__")!;
+
+    return [
+      name,
+      {
+        key: "deletedAt",
+        label: "Deleted time",
+        width: "180px",
+        sortable: true,
+        render: (_, record) => record.metadata?.deletedAt ?? "--",
+        sortValue: (record) =>
+          record.metadata?.deletedAt
+            ? new Date(record.metadata.deletedAt).getTime()
+            : 0,
+      },
+      type,
+      updatedAt,
+      actions,
+    ];
+  }}
+/>
+```
+
+The built-in action column is also part of `defaultColumns`. Its key is `__actions__`, so you can remove it, move it, or replace it.
+
+Example: remove the action column completely:
+
+```tsx
+<FileExplorer
+  data={data}
+  defaultViewMode="list"
+  getListColumns={(defaultColumns) =>
+    defaultColumns.filter((col) => col.key !== "__actions__")
+  }
+/>
+```
+
+Example: replace the action column with your own button:
+
+```tsx
+<FileExplorer
+  data={data}
+  defaultViewMode="list"
+  getListColumns={(defaultColumns) =>
+    defaultColumns.map((col) =>
+      col.key === "__actions__"
+        ? {
+            ...col,
+            width: "120px",
+            render: (_, record) => (
+              <button onClick={() => console.log("custom action", record)}>
+                Custom
+              </button>
+            ),
+          }
+        : col,
+    )
+  }
+/>
+```
+
 ## UI Visibility Controls
 
 You can directly control the top area:
@@ -476,6 +549,7 @@ type FileListColumn = {
 | `sortDirection` | `"asc" \| "desc"` | Controlled sort direction. |
 | `onSortChange` | `(field, direction) => void` | Called when sorting changes. |
 | `listColumns` | `FileListColumn[]` | Appends custom list columns. |
+| `getListColumns` | `(defaultColumns) => FileListColumn[]` | Full control over built-in list columns. |
 
 ## Header and Feature Props
 

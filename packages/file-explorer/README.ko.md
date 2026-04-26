@@ -216,6 +216,79 @@ export default function Page() {
 />
 ```
 
+기본 내장 컬럼 전체를 직접 제어하고 싶다면 `getListColumns` 를 사용하세요.
+
+예: `size` 컬럼을 숨기고 순서를 바꾸고, `Deleted time` 컬럼을 추가하기:
+
+```tsx
+<FileExplorer
+  data={data}
+  defaultViewMode="list"
+  getListColumns={(defaultColumns) => {
+    const name = defaultColumns.find((col) => col.key === "name")!;
+    const type = defaultColumns.find((col) => col.key === "type")!;
+    const updatedAt = defaultColumns.find((col) => col.key === "updatedAt")!;
+    const actions = defaultColumns.find((col) => col.key === "__actions__")!;
+
+    return [
+      name,
+      {
+        key: "deletedAt",
+        label: "Deleted time",
+        width: "180px",
+        sortable: true,
+        render: (_, record) => record.metadata?.deletedAt ?? "--",
+        sortValue: (record) =>
+          record.metadata?.deletedAt
+            ? new Date(record.metadata.deletedAt).getTime()
+            : 0,
+      },
+      type,
+      updatedAt,
+      actions,
+    ];
+  }}
+/>
+```
+
+기본 액션 컬럼도 `defaultColumns` 안에 포함되어 있습니다. `key` 는 `__actions__` 이므로 삭제, 이동, 교체가 가능합니다.
+
+예: 액션 컬럼을 완전히 제거하기:
+
+```tsx
+<FileExplorer
+  data={data}
+  defaultViewMode="list"
+  getListColumns={(defaultColumns) =>
+    defaultColumns.filter((col) => col.key !== "__actions__")
+  }
+/>
+```
+
+예: 액션 컬럼을 직접 만든 버튼으로 교체하기:
+
+```tsx
+<FileExplorer
+  data={data}
+  defaultViewMode="list"
+  getListColumns={(defaultColumns) =>
+    defaultColumns.map((col) =>
+      col.key === "__actions__"
+        ? {
+            ...col,
+            width: "120px",
+            render: (_, record) => (
+              <button onClick={() => console.log("custom action", record)}>
+                Custom
+              </button>
+            ),
+          }
+        : col,
+    )
+  }
+/>
+```
+
 ## 헤더 표시 제어
 
 ```tsx
@@ -258,6 +331,7 @@ export default function Page() {
 | `sortDirection` | `"asc" \| "desc"` | 제어형 정렬 방향입니다. |
 | `onSortChange` | `(field, direction) => void` | 정렬 변경 콜백입니다. |
 | `listColumns` | `FileListColumn[]` | 사용자 정의 리스트 컬럼을 추가합니다. |
+| `getListColumns` | `(defaultColumns) => FileListColumn[]` | 기본 리스트 컬럼 전체를 직접 제어합니다. |
 
 ## 헤더와 기능 Props
 

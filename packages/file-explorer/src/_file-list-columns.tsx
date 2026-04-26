@@ -46,31 +46,12 @@ export const getFileListColumns = (
     defaultItems: FileContextMenuItem[],
   ) => FileContextMenuItem[],
   customColumns: FileListColumn[] = [],
+  getListColumns?: (defaultColumns: FileListColumn[]) => FileListColumn[],
   locale?: string,
   t: (key: string, vars?: Record<string, string | number>) => string = (key) =>
     key,
 ): DataTableHeader<FileNode>[] => {
-  const customListColumns: DataTableHeader<FileNode>[] = customColumns
-    .filter((column) => column.key !== "__actions__")
-    .map((column) => ({
-      key: column.key,
-      label: column.label,
-      width: column.width,
-      sortable: column.sortable,
-      align: column.align,
-      render: column.render
-        ? (value, record) => column.render?.(value, record)
-        : (value, record) => (
-            <span className="text-(--_fe-text-muted)">
-              {value ??
-                record.metadata?.[String(column.key)] ??
-                "--"}
-            </span>
-          ),
-    }));
-
-  return [
-    {
+  const nameColumn: FileListColumn = {
     key: "name",
     label: t("list.column.name"),
     sortable: true,
@@ -121,9 +102,9 @@ export const getFileListColumns = (
         </div>
       );
     },
-    },
+  };
 
-    {
+  const typeColumn: FileListColumn = {
       key: "type",
       label: t("list.column.type"),
       width: "120px",
@@ -133,8 +114,8 @@ export const getFileListColumns = (
           {getFileCategoryLabel(record, locale)}
         </span>
       ),
-    },
-    {
+  };
+  const sizeColumn: FileListColumn = {
       key: "size",
       label: t("list.column.size"),
       width: "120px",
@@ -145,8 +126,8 @@ export const getFileListColumns = (
           {record.type === "folder" ? "--" : bytesFormat(v)}
         </span>
       ),
-    },
-    {
+  };
+  const updatedAtColumn: FileListColumn = {
       key: "updatedAt",
       label: t("list.column.updatedAt"),
       width: "180px",
@@ -155,9 +136,8 @@ export const getFileListColumns = (
       render: (v) => (
         <span className="text-(--_fe-text-muted)">{formatDateTime(v)}</span>
       ),
-    },
-    ...customListColumns,
-    {
+  };
+  const actionColumn: FileListColumn = {
       key: "__actions__",
       label: "",
       width: "100px",
@@ -212,6 +192,32 @@ export const getFileListColumns = (
           />
         </div>
       ),
-    },
+  };
+
+  const defaultColumns = [
+    nameColumn,
+    typeColumn,
+    sizeColumn,
+    updatedAtColumn,
+    actionColumn,
   ];
+
+  const resolvedColumns = getListColumns
+    ? getListColumns(defaultColumns)
+    : [...defaultColumns.slice(0, -1), ...customColumns, actionColumn];
+
+  return resolvedColumns.map((column) => ({
+    key: column.key,
+    label: column.label,
+    width: column.width,
+    sortable: column.sortable,
+    align: column.align,
+    render: column.render
+      ? (value, record) => column.render?.(value, record)
+      : (value, record) => (
+          <span className="text-(--_fe-text-muted)">
+            {value ?? record.metadata?.[String(column.key)] ?? "--"}
+          </span>
+        ),
+  }));
 };

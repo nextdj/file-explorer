@@ -267,7 +267,8 @@ export function performSort<T>(
       const prioB = getPriority(valB);
 
       if (prioA !== prioB) {
-        return prioA - prioB;
+        const priorityResult = prioA - prioB;
+        return direction === "asc" ? priorityResult : -priorityResult;
       }
 
       const result = valA.localeCompare(valB, "zh-CN", {

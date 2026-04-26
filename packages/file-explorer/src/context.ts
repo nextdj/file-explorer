@@ -36,6 +36,7 @@ interface FileExplorerContextValue {
   sortDirection?: FileSortDirection;
   onSortChange?: (field: FileSortField, direction: FileSortDirection) => void;
   listColumns?: FileListColumn[];
+  getListColumns?: (defaultColumns: FileListColumn[]) => FileListColumn[];
   showBreadcrumbs: boolean;
   showToolbar: boolean;
   viewControls: Required<FileExplorerViewControls>;

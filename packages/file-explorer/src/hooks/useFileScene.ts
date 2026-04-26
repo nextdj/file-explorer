@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useCallback } from "react";
-import { CategoryColor, FileNode } from "../types";
+import { CategoryColor, FileListColumn, FileNode } from "../types";
 import { useExplorerState } from "./useExplorerState";
 import { useFileActions } from "./useFileActions";
 import { useFileSelector } from "./useFileSelector";
@@ -31,6 +31,7 @@ export function useFileScene(filesData: FileNode[], currentFolderId: string) {
     sortField,
     sortDirection,
     onSortChange,
+    getListColumns,
     listColumns,
     t,
     allowMultiSelect,
@@ -44,15 +45,24 @@ export function useFileScene(filesData: FileNode[], currentFolderId: string) {
     onCopy,
     onMove,
   } = useFileExplorerContext();
-  const sortAccessors = useMemo(
-    () =>
-      Object.fromEntries(
-        (listColumns ?? [])
-          .filter((column) => Boolean(column.sortValue))
-          .map((column) => [String(column.key), column.sortValue!]),
-      ),
-    [listColumns],
-  );
+  const sortAccessors = useMemo(() => {
+    const defaultListColumns: FileListColumn[] = [
+      { key: "name", label: t("list.column.name"), sortable: true },
+      { key: "type", label: t("list.column.type"), sortable: true },
+      { key: "size", label: t("list.column.size"), sortable: true },
+      { key: "updatedAt", label: t("list.column.updatedAt"), sortable: true },
+      { key: "__actions__", label: "" },
+    ];
+    const resolvedColumns = getListColumns
+      ? getListColumns(defaultListColumns)
+      : [...defaultListColumns.slice(0, -1), ...(listColumns ?? []), defaultListColumns.at(-1)!];
+
+    return Object.fromEntries(
+      resolvedColumns
+        .filter((column) => Boolean(column.sortValue))
+        .map((column) => [String(column.key), column.sortValue!]),
+    );
+  }, [getListColumns, listColumns, t]);
   const explorer = useExplorerState(localFiles, lang, {
     defaultViewMode,
     viewMode,

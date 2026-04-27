@@ -84,7 +84,7 @@ export const FileFolder = ({
       onClick={onClick}
       onDoubleClick={() => onDoubleClick?.(fileNode)}
       className={cn(
-        "bg-(--_fe-item-bg-soft) group relative flex w-full cursor-pointer items-center justify-start gap-2.5 rounded-lg border border-transparent p-3 transition-colors duration-150 ease-out select-none",
+        "bg-(--_fe-item-bg-soft) group relative flex w-full cursor-pointer items-center justify-start gap-2.5 rounded-lg border border-transparent p-2 transition-colors   select-none",
         active
           ? "bg-(--_fe-active-subtle) border-(--_fe-selected)"
           : "hover:border-(--_fe-selected)",

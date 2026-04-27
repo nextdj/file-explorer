@@ -92,12 +92,7 @@ export const FileGridView = ({
         </h3>
         {/* The grid wrapper is only used here, so its layout reads better when
         kept next to the section rendering logic. */}
-        <div
-          className={cn(
-            "grid gap-x-5 gap-y-3.5",
-            gridColumnsClass,
-          )}
-        >
+        <div className={cn("grid gap-3", gridColumnsClass)}>
           {list.map(renderItem)}
         </div>
       </div>

@@ -192,8 +192,7 @@ export default function FileContent({
       viewControls.showSortDirectionOptions ||
       viewControls.showHiddenFileOptions ||
       (features.tagFilter && viewControls.showTagFilterOption));
-  const hasRightControls =
-    hasDisplayMenu || viewControls.showViewToggleButton;
+  const hasRightControls = hasDisplayMenu || viewControls.showViewToggleButton;
   const hasHeaderControls = hasBreadcrumbs || showToolbar || hasRightControls;
   const showHeaderMeta = hasHeaderControls && Boolean(headerMeta);
   const showHeader = hasHeaderControls || showHeaderMeta;
@@ -220,15 +219,14 @@ export default function FileContent({
   );
 
   const scrollViewportClass = cn(
-    showHeader &&
-      (toolbarStyle === "default" ? "pt-0" : "pt-32"),
+    showHeader && (toolbarStyle === "default" ? "pt-0" : "pt-32"),
     showHeader && toolbarStyle === "floating" && "pt-36",
   );
 
   const scrollAreaClass = cn(
     showHeader &&
       toolbarStyle === "default" &&
-      (showHeaderMeta ? "mt-25" : "mt-12"),
+      (showHeaderMeta ? "mt-25" : "mt-25"),
   );
 
   return (

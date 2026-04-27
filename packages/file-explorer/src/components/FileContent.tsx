@@ -226,7 +226,9 @@ export default function FileContent({
   );
 
   const scrollAreaClass = cn(
-    showHeader && toolbarStyle === "default" && "mt-25",
+    showHeader &&
+      toolbarStyle === "default" &&
+      (showHeaderMeta ? "mt-25" : "mt-12"),
   );
 
   return (

@@ -94,7 +94,7 @@ export const FileGridView = ({
         kept next to the section rendering logic. */}
         <div
           className={cn(
-            "grid gap-5",
+            "grid gap-x-5 gap-y-3.5",
             gridColumnsClass,
           )}
         >

@@ -231,7 +231,7 @@ export default function FileContent({
 
   return (
     <div
-      className="relative flex  h-screen min-h-0 flex-col overflow-hidden"
+      className="relative flex h-full min-h-0 flex-col overflow-hidden"
       onClick={(e) => {
         const isMenu = (e.target as HTMLElement).closest(
           "[data-radix-menu-content]",
@@ -245,7 +245,12 @@ export default function FileContent({
           <div className={headerBarClass}>
             <div className={headerSurfaceClass} />
             {/* Keep the header inline so the layout is readable in one file. */}
-            <div className="pointer-events-auto relative flex flex-col gap-3">
+            <div
+              className={cn(
+                "pointer-events-auto relative flex flex-col",
+                showHeaderMeta && "gap-3",
+              )}
+            >
               {hasHeaderControls ? (
                 <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4">
                   <div className="min-w-0">

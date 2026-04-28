@@ -7,11 +7,11 @@ import { cn } from "../lib/utils";
 type TableVariant = "default" | "primary";
 
 const headerInnerBaseClass =
-  "flex min-h-9 items-center gap-1 bg-clip-padding px-4 py-2 backdrop-blur-sm";
+  "text-(--_fe-text-sub) flex min-h-9 items-center gap-1 bg-clip-padding px-4 py-2 text-[length:var(--_fe-font-sm)] backdrop-blur-sm";
 
 const headerInnerVariantClass: Record<TableVariant, string> = {
   default: "bg-(--_fe-item-bg)",
-  primary: "bg-(--_fe-bg) font-semibold",
+  primary: "bg-(--_fe-item-bg-soft) font-medium",
 };
 
 const rowBaseClass =

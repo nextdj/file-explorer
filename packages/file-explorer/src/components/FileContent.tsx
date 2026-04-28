@@ -87,12 +87,12 @@ function Breadcrumbs({
     <div className="flex items-center gap-2">
       <Button
         icon={ChevronLeft}
-        variant="primary"
+        variant="secondary"
         size="sm"
         className={cn(
-          "flex size-7 items-center justify-center rounded-full",
+          "bg-(--_fe-item-bg-soft) hover:bg-(--_fe-hover-soft) flex size-7 items-center justify-center rounded-full border-(--_fe-border-soft)",
           isRoot &&
-            "bg-[color-mix(in_srgb,var(--_fe-selected)_12%,var(--_fe-bg))] text-(--_fe-text-muted) hover:bg-[color-mix(in_srgb,var(--_fe-selected)_12%,var(--_fe-bg))]",
+            "bg-(--_fe-active-subtle) text-(--_fe-text-muted) hover:bg-(--_fe-active-subtle)",
         )}
         disabled={isRoot}
         onClick={() => parent && onNavigate?.(parent)}

@@ -150,16 +150,16 @@ export default function Page() {
 
 ## 자주 쓰는 설정
 
-### 멀티 선택 끄기
+### 멀티 선택, 그리드 크기, 글자 크기, 테마
 
 ```tsx
-<FileExplorer data={data} allowMultiSelect={false} />
-```
-
-### 그리드 크기
-
-```tsx
-<FileExplorer data={data} gridSize="lg" />
+<FileExplorer
+  data={data}
+  allowMultiSelect={false}
+  gridSize="lg"
+  fontSize="sm"
+  theme="dark"
+/>
 ```
 
 지원 값:
@@ -167,6 +167,18 @@ export default function Page() {
 - `"sm"`
 - `"md"`
 - `"lg"`
+
+`fontSize` 도 다음 값을 지원합니다:
+
+- `"sm"`
+- `"md"`
+- `"lg"`
+
+`theme` 도 다음 값을 지원합니다:
+
+- `"auto"`
+- `"light"`
+- `"dark"`
 
 ### 기본 뷰와 기본 정렬
 
@@ -311,6 +323,8 @@ export default function Page() {
 | `files` | `FileNode[]` | 구 버전 분리 입력입니다. |
 | `breadcrumbs` | `BreadcrumbItem[]` | 구 버전 분리 입력입니다. |
 | `storageInfo` | `{ totalBytes?: number; availableBytes?: number }` | 용량 정보를 표시합니다. |
+| `fontSize` | `"sm" \| "md" \| "lg"` | 컴포넌트 전체 글자 크기입니다. 기본값은 `"md"` 입니다. |
+| `theme` | `"auto" \| "light" \| "dark"` | 테마 모드입니다. 기본값은 `"auto"` 입니다. |
 | `lang` | `string` | 언어를 설정합니다. |
 | `dateFormat` | `string` | 날짜 형식을 설정합니다. |
 | `renderPreview` | `(file) => ReactNode` | grid 미리보기를 커스터마이즈합니다. |

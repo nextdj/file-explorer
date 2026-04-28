@@ -247,13 +247,15 @@ This example focuses on the most common app-side callbacks:
 
 ## Selection and Grid Size
 
-You can disable multi-select and choose a grid size:
+You can disable multi-select, choose a grid size, apply a global font size, and control the theme:
 
 ```tsx
 <FileExplorer
   data={data}
   allowMultiSelect={false}
   gridSize="lg"
+  fontSize="sm"
+  theme="dark"
 />
 ```
 
@@ -268,6 +270,18 @@ When `allowMultiSelect={false}`, the component disables:
 - `"sm"`
 - `"md"`
 - `"lg"`
+
+`fontSize` supports:
+
+- `"sm"`
+- `"md"`
+- `"lg"`
+
+`theme` supports:
+
+- `"auto"`
+- `"light"`
+- `"dark"`
 
 ## View Mode and Sorting
 
@@ -529,6 +543,8 @@ type FileListColumn = {
 | `files` | `FileNode[]` | Legacy split input. |
 | `breadcrumbs` | `BreadcrumbItem[]` | Legacy split input. |
 | `storageInfo` | `{ totalBytes?: number; availableBytes?: number }` | Shows capacity text below the header. |
+| `fontSize` | `"sm" \| "md" \| "lg"` | Global font scale for the component. Default is `"md"`. |
+| `theme` | `"auto" \| "light" \| "dark"` | Theme mode. Default is `"auto"`. |
 | `lang` | `string` | Sets locale. |
 | `dateFormat` | `string` | Controls formatted date output. |
 | `renderPreview` | `(file) => ReactNode` | Custom preview renderer for grid items. |

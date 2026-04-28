@@ -101,8 +101,8 @@ export const FileItem = ({
       onDoubleClick={handleDoubleClick}
       className={cn(
         "group relative flex cursor-pointer flex-col overflow-hidden rounded-xl border border-transparent transition-colors duration-150 ease-out select-none",
-        "hover:border-(--_fe-selected)",
-        active && "border-(--_fe-selected) shadow-md",
+        "hover:border-(--_fe-border)",
+        active && "border-(--_fe-border) shadow-md",
         className,
       )}
     >
@@ -130,7 +130,7 @@ export const FileItem = ({
           <div className="bg-(--_fe-item-bg-soft) relative flex h-full w-full items-center justify-center">
             <div
               className={cn(
-                "absolute top-3 left-3 rounded-full px-2 py-1 text-[10px] leading-none font-semibold tracking-[0.08em]",
+                "absolute top-3 left-3 rounded-full px-2 py-1 text-[length:var(--_fe-font-2xs)] leading-none font-medium tracking-[0.08em]",
                 bgClass,
                 color,
               )}
@@ -140,12 +140,11 @@ export const FileItem = ({
             <div
               className={cn(
                 "flex h-20 w-20 items-center justify-center rounded-5.5",
-                bgClass,
               )}
             >
               <Icon
                 className={cn("h-10 w-10 shrink-0", color)}
-                strokeWidth={1.7}
+                strokeWidth={1.5}
               />
             </div>
           </div>
@@ -166,7 +165,7 @@ export const FileItem = ({
           </div>
         ) : (
           <Tooltip content={fileNode.name}>
-            <div className="text-(--_fe-selected) line-clamp-1 text-left text-sm break-all">
+            <div className="text-(--_fe-selected) line-clamp-1 text-left text-[length:var(--_fe-font-sm)] break-all">
               {tagColors.length > 0 && (
                 <span className="mr-1.5 inline-flex -translate-y-px items-center">
                   <ColorTags colors={tagColors} size={10} />
@@ -178,12 +177,12 @@ export const FileItem = ({
           </Tooltip>
         )}
         <p
-          className="text-(--_fe-text-muted) mt-1 text-xs"
+          className="text-(--_fe-text-muted) mt-1 text-[length:var(--_fe-font-xs)]"
           suppressHydrationWarning
         >
           {formatDateTime(fileNode.updatedAt, dateFormat)}
         </p>
-        <p className="text-(--_fe-text-muted) mt-1 text-xs">
+        <p className="text-(--_fe-text-muted) mt-1 text-[length:var(--_fe-font-xs)]">
           {fileNode.size && bytesFormat(fileNode.size)}
         </p>
       </div>

@@ -194,7 +194,7 @@ export const ViewToolbar = ({
     <div className="flex" onClick={(e) => e.stopPropagation()}>
       {showSelectionActions && selectedCount > 0 ? (
         <div className="bg-(--_fe-active) flex w-full items-center gap-2 rounded-full px-3 py-1">
-          <div className="border-(--_fe-active) text-(--_fe-text) mr-1 flex shrink-0 items-center border-r px-3 text-xs font-bold">
+          <div className="border-(--_fe-active) text-(--_fe-text) mr-1 flex shrink-0 items-center border-r px-3 text-[length:var(--_fe-font-xs)] font-bold">
             {t("status.selectedCount", { count: selectedCount })}
           </div>
 
@@ -292,8 +292,8 @@ export const ViewToolbar = ({
                     icon: Rows3,
                   },
                 ]}
-                className="h-8   border border-(--_fe-border) bg-(--_fe-bg) p-px "
-                itemClassName="h-full min-w-8 cursor-pointer    text-(--_fe-text-sub) data-[state=on]:text-(--_fe-selected) hover:text-(--_fe-selected)"
+                className="h-7.5 border border-(--_fe-border) bg-(--_fe-bg)"
+                itemClassName="h-full min-w-7.5 cursor-pointer text-(--_fe-text-sub) data-[state=on]:text-(--_fe-selected) hover:text-(--_fe-selected)"
                 showSeparator={false}
               />
             ) : null}

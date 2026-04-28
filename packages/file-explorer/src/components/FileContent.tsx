@@ -32,10 +32,10 @@ function EmptyState({
         <div className="bg-(--_fe-item-bg-soft) text-(--_fe-text-muted) mb-5 flex h-16 w-16 items-center justify-center rounded-2xl">
           <FolderOpen size={28} strokeWidth={1.8} />
         </div>
-        <h3 className="text-(--_fe-selected) text-base font-semibold">
+        <h3 className="text-(--_fe-selected) text-[length:var(--_fe-font-base)] font-semibold">
           {title}
         </h3>
-        <p className="text-(--_fe-text-muted) mt-2 text-sm leading-6">
+        <p className="text-(--_fe-text-muted) mt-2 text-[length:var(--_fe-font-sm)] leading-6">
           {description}
         </p>
       </div>
@@ -113,7 +113,7 @@ function Breadcrumbs({
             className={cn("h-8 px-0 py-0", isRoot && "pointer-events-none")}
           >
             <div className="flex h-8 flex-nowrap items-center gap-3 px-2">
-              <span className="text-(--_fe-text) text-lg leading-none font-bold">
+              <span className="text-(--_fe-text) text-[length:var(--_fe-font-lg)] leading-none font-bold">
                 {current.name}
               </span>
               <ChevronDown
@@ -204,14 +204,12 @@ export default function FileContent({
 
   const headerBarClass = cn(
     "relative   pt-3 pb-3",
-    toolbarStyle === "default" && "bg-(--_fe-bg)",
     toolbarStyle === "floating" && "rounded-3xl shadow-(--_fe-shadow-floating)",
     toolbarStyle === "transparent" && "",
   );
 
   const headerSurfaceClass = cn(
     "pointer-events-none absolute inset-0",
-    toolbarStyle === "default" && "bg-(--_fe-bg)",
     toolbarStyle === "floating" &&
       "overflow-hidden rounded-3xl border border-(--_fe-glass-border) bg-(--_fe-glass-bg) backdrop-blur-md",
     toolbarStyle === "transparent" &&
@@ -289,7 +287,7 @@ export default function FileContent({
               ) : null}
 
               {showHeaderMeta ? (
-                <div className="text-(--_fe-text-muted) text-sm">
+                <div className="text-(--_fe-text-muted) text-[length:var(--_fe-font-sm)]">
                   {headerMeta}
                 </div>
               ) : null}

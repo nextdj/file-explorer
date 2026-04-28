@@ -177,7 +177,7 @@ function TransferTreeNode({
             </>
           )}
         </span>
-        <span className="truncate text-sm">{node.name}</span>
+        <span className="truncate text-[length:var(--_fe-font-sm)]">{node.name}</span>
         {state.loading ? (
           <Loader2
             size={14}
@@ -188,7 +188,7 @@ function TransferTreeNode({
 
       {state.error && isExpanded ? (
         <div
-          className="px-4 py-2 text-sm text-(--_fe-text-muted)"
+          className="px-4 py-2 text-[length:var(--_fe-font-sm)] text-(--_fe-text-muted)"
           style={{ paddingLeft: `${56 + level * 28}px` }}
         >
           {state.error}
@@ -511,7 +511,7 @@ export function TransferDialog({
       <div className="relative flex max-h-[82vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-(--_fe-border) bg-(--_fe-bg) shadow-2xl">
         <div className="flex items-start justify-between px-8 pt-7">
           <div className="min-w-0">
-            <h3 className="max-w-155 truncate text-xl leading-tight font-medium text-(--_fe-selected)">
+            <h3 className="max-w-155 truncate text-[length:var(--_fe-font-xl)] leading-tight font-medium text-(--_fe-selected)">
               {title}
             </h3>
           </div>
@@ -534,7 +534,7 @@ export function TransferDialog({
                   type="button"
                   onClick={() => handleSourceChange(source.id)}
                   className={cn(
-                    "relative flex cursor-pointer items-center gap-2 pb-3 text-base transition-colors",
+                    "relative flex cursor-pointer items-center gap-2 pb-3 text-[length:var(--_fe-font-base)] transition-colors",
                     isActive
                       ? "text-(--_fe-selected)"
                       : "text-(--_fe-text-sub) hover:text-(--_fe-text)",
@@ -610,7 +610,7 @@ export function TransferDialog({
                   />
                 ))
               ) : (
-                <div className="px-4 py-8 text-sm text-(--_fe-text-muted)">
+                <div className="px-4 py-8 text-[length:var(--_fe-font-sm)] text-(--_fe-text-muted)">
                   {t("transfer.empty")}
                 </div>
               )}

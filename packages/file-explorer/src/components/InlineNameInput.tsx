@@ -114,7 +114,7 @@ export function InlineNameInput({
       }}
       onBlur={commit}
       className={cn(
-        "h-7 w-full rounded-md border border-(--_fe-border) bg-(--_fe-bg) px-2 text-sm text-(--_fe-selected) outline-none",
+        "h-7 w-full rounded-md border border-(--_fe-border) bg-(--_fe-bg) px-2 text-[length:var(--_fe-font-sm)] text-(--_fe-selected) outline-none",
         "focus:border-(--_fe-selected) focus:ring-0",
         className,
       )}

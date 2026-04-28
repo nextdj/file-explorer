@@ -2,3 +2,62 @@
 
 /* 关键：显式包含外部组件库的源码路径 */
 @source "../../../packages/file-explorer/src/**/*.{ts,tsx}";
+
+:root {
+    color-scheme: light;
+    --app-bg: #f7f8fa;
+    --app-surface: #ffffff;
+    --app-text: #171a20;
+    --app-text-muted: #6b7280;
+    --app-border: #e5e7eb;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        color-scheme: dark;
+        --app-bg: #0f1115;
+        --app-surface: #171a20;
+        --app-text: #f3f4f6;
+        --app-text-muted: #9ca3af;
+        --app-border: #2b313a;
+    }
+}
+
+html.light {
+    color-scheme: light;
+    --app-bg: #f7f8fa;
+    --app-surface: #ffffff;
+    --app-text: #171a20;
+    --app-text-muted: #6b7280;
+    --app-border: #e5e7eb;
+}
+
+html.dark {
+    color-scheme: dark;
+    --app-bg: #0f1115;
+    --app-surface: #171a20;
+    --app-text: #f3f4f6;
+    --app-text-muted: #9ca3af;
+    --app-border: #2b313a;
+}
+
+html,
+body {
+    height: 100%;
+}
+
+body {
+    margin: 0;
+    background: var(--app-bg);
+    color: var(--app-text);
+    font-family:
+        "SF Pro Text", "SF Pro SC", "Helvetica Neue", "PingFang SC",
+        "Microsoft YaHei UI", "Noto Sans SC", sans-serif;
+    transition:
+        background-color 180ms ease,
+        color 180ms ease;
+}
+
+* {
+    box-sizing: border-box;
+}

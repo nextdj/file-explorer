@@ -150,16 +150,16 @@ export default function Page() {
 
 ## よく使う設定
 
-### 複数選択を無効化
+### 複数選択、グリッドサイズ、文字サイズ、テーマ
 
 ```tsx
-<FileExplorer data={data} allowMultiSelect={false} />
-```
-
-### グリッドサイズ
-
-```tsx
-<FileExplorer data={data} gridSize="lg" />
+<FileExplorer
+  data={data}
+  allowMultiSelect={false}
+  gridSize="lg"
+  fontSize="sm"
+  theme="dark"
+/>
 ```
 
 対応値:
@@ -167,6 +167,18 @@ export default function Page() {
 - `"sm"`
 - `"md"`
 - `"lg"`
+
+`fontSize` も次をサポートします:
+
+- `"sm"`
+- `"md"`
+- `"lg"`
+
+`theme` も次をサポートします:
+
+- `"auto"`
+- `"light"`
+- `"dark"`
 
 ### 初期ビューと初期ソート
 
@@ -311,6 +323,8 @@ export default function Page() {
 | `files` | `FileNode[]` | 旧方式の分割入力。 |
 | `breadcrumbs` | `BreadcrumbItem[]` | 旧方式の分割入力。 |
 | `storageInfo` | `{ totalBytes?: number; availableBytes?: number }` | 容量情報を表示します。 |
+| `fontSize` | `"sm" \| "md" \| "lg"` | コンポーネント全体の文字サイズ。既定値は `"md"`。 |
+| `theme` | `"auto" \| "light" \| "dark"` | テーマモード。既定値は `"auto"`。 |
 | `lang` | `string` | ロケールを設定します。 |
 | `dateFormat` | `string` | 日時表示形式を設定します。 |
 | `renderPreview` | `(file) => ReactNode` | grid プレビューをカスタマイズします。 |

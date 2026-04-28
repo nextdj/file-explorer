@@ -38,7 +38,7 @@ export const FileDetail = ({
         <div className="flex h-full flex-col">
           <div className="flex items-start justify-between gap-3 border-b border-(--_fe-border) px-5 py-5">
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold tracking-[0.14em] text-(--_fe-text-muted) uppercase">
+              <p className="text-[length:var(--_fe-font-xs)] font-semibold tracking-[0.14em] text-(--_fe-text-muted) uppercase">
                 {t("detail.title")}
               </p>
               <div className="mt-3 flex min-w-0 items-center gap-3">
@@ -59,11 +59,11 @@ export const FileDetail = ({
                 </span>
                 <div className="min-w-0 flex-1">
                   <Tooltip content={file.name}>
-                    <h3 className="truncate text-lg font-semibold text-(--_fe-selected)">
+                    <h3 className="truncate text-[length:var(--_fe-font-lg)] font-semibold text-(--_fe-selected)">
                       {file.name}
                     </h3>
                   </Tooltip>
-                  <p className="mt-1 text-sm text-(--_fe-text-muted)">
+                  <p className="mt-1 text-[length:var(--_fe-font-sm)] text-(--_fe-text-muted)">
                     {file.type === "folder"
                       ? t("detail.folderDescription")
                       : `${visual.category} · ${visual.label}`}

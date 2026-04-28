@@ -217,6 +217,8 @@ Size: ${formatBytes(file.size)}</pre>
       <FileExplorer
         lang="en"
         toolbarStyle="default"
+        fontSize="sm"
+        theme="dark"
         features={{
           uploadFile: true,
           uploadFolder: true,

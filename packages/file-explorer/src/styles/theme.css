@@ -1,5 +1,5 @@
 :where(.fe-theme) {
-    color-scheme: light dark;
+    color-scheme: light;
     font-family: var(
         --fe-font-sans,
         "SF Pro Text",
@@ -31,6 +31,12 @@
     --_fe-glass-border: var(--fe-glass-border, #ffffffb3);
     --_fe-shadow-soft: var(--fe-shadow-soft, 0 1px 30px #0f172a14);
     --_fe-shadow-floating: var(--fe-shadow-floating, 0 14px 36px #0f172a14);
+    --_fe-font-2xs: 0.625rem;
+    --_fe-font-xs: 0.75rem;
+    --_fe-font-sm: 0.875rem;
+    --_fe-font-base: 1rem;
+    --_fe-font-lg: 1.125rem;
+    --_fe-font-xl: 1.25rem;
     --_fe-border-soft: color-mix(in srgb, var(--_fe-border) 50%, transparent);
     --_fe-hover-soft: color-mix(in srgb, var(--_fe-hover) 50%, transparent);
     --_fe-hover-strong: color-mix(in srgb, var(--_fe-hover) 60%, transparent);
@@ -39,8 +45,55 @@
     --_fe-item-bg-soft: color-mix(in srgb, var(--_fe-item-bg) 50%, transparent);
 }
 
+:where(.fe-theme[data-theme="auto"]) {
+    color-scheme: light dark;
+}
+
+:where(.fe-theme[data-theme="dark"]) {
+    color-scheme: dark;
+    --_fe-bg: var(--fe-bg, #171a20);
+    --_fe-text: var(--fe-text, #f4f4f4);
+    --_fe-text-muted: var(--fe-text-muted, #a9adb3);
+    --_fe-text-sub: var(--fe-text-sub, #d0d1d2);
+    --_fe-item-bg: var(--fe-item-bg, #23262b);
+    --_fe-hover: var(--fe-hover, #2d3035);
+    --_fe-border: var(--fe-border, #3a3d42);
+    --_fe-active: var(--fe-active, #303338);
+    --_fe-selected: var(--fe-selected, #f4f4f4);
+    --_fe-primary-bg: var(--fe-primary-bg, #f4f4f4);
+    --_fe-primary-text: var(--fe-primary-text, #171a20);
+    --_fe-primary-hover: var(--fe-primary-hover, #ffffff);
+    --_fe-danger: var(--fe-danger, #f87171);
+    --_fe-danger-soft: var(--fe-danger-soft, #f8717124);
+    --_fe-tooltip-bg: var(--fe-tooltip-bg, #111318eb);
+    --_fe-tooltip-text: var(--fe-tooltip-text, #ffffff);
+    --_fe-glass-bg: var(--fe-glass-bg, #171a20c9);
+    --_fe-glass-bg-strong: var(--fe-glass-bg-strong, #171a20d6);
+    --_fe-glass-border: var(--fe-glass-border, #ffffff1f);
+    --_fe-shadow-soft: var(--fe-shadow-soft, 0 1px 28px #02061747);
+    --_fe-shadow-floating: var(--fe-shadow-floating, 0 14px 36px #02061752);
+}
+
+:where(.fe-theme[data-font-size="sm"]) {
+    --_fe-font-2xs: 0.5625rem;
+    --_fe-font-xs: 0.6875rem;
+    --_fe-font-sm: 0.8125rem;
+    --_fe-font-base: 0.9375rem;
+    --_fe-font-lg: 1.0625rem;
+    --_fe-font-xl: 1.1875rem;
+}
+
+:where(.fe-theme[data-font-size="lg"]) {
+    --_fe-font-2xs: 0.6875rem;
+    --_fe-font-xs: 0.8125rem;
+    --_fe-font-sm: 0.9375rem;
+    --_fe-font-base: 1.0625rem;
+    --_fe-font-lg: 1.1875rem;
+    --_fe-font-xl: 1.375rem;
+}
+
 @media (prefers-color-scheme: dark) {
-    :where(.fe-theme) {
+    :where(.fe-theme[data-theme="auto"]) {
         --_fe-bg: var(--fe-bg, #171a20);
         --_fe-text: var(--fe-text, #f4f4f4);
         --_fe-text-muted: var(--fe-text-muted, #a9adb3);

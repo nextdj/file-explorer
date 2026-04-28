@@ -56,6 +56,8 @@ export interface FileNode {
 export type FileViewMode = "grid" | "list";
 export type FileSortDirection = "asc" | "desc";
 export type FileSortField = keyof FileNode | string;
+export type FileExplorerFontSize = "sm" | "md" | "lg";
+export type FileExplorerTheme = "auto" | "light" | "dark";
 
 export interface FileListColumn {
   key: FileSortField | "__actions__";
@@ -161,6 +163,8 @@ export interface FileExplorerProps {
   files?: FileNode[];
   breadcrumbs?: BreadcrumbItem[];
   storageInfo?: FileExplorerStorageInfo;
+  fontSize?: FileExplorerFontSize;
+  theme?: FileExplorerTheme;
   allowMultiSelect?: boolean;
   gridSize?: "sm" | "md" | "lg";
   defaultViewMode?: FileViewMode;

@@ -105,7 +105,7 @@ export const ActionMenu = ({
         >
           {title && (
             <div className="mb-0.5 border-b border-(--_fe-border) px-3 py-1.5 select-none">
-              <span className="text-(--_fe-text-sub) text-[10px] font-semibold leading-none tracking-[0.14em] uppercase">
+              <span className="text-(--_fe-text-sub) text-[length:var(--_fe-font-2xs)] font-semibold leading-none tracking-[0.14em] uppercase">
                 {title}
               </span>
             </div>
@@ -155,7 +155,7 @@ export const ActionMenu = ({
                       }
                     }}
                     className={cn(
-                      "flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.75 text-[13px] outline-none",
+                      "flex w-full cursor-pointer items-center gap-2.5 rounded-lg px-2 py-1.75 text-[length:var(--_fe-font-sm)] outline-none",
                       item.isDelete
                         ? "text-red-500 focus:bg-red-500/10 focus:text-red-600 data-highlighted:bg-red-500/10 data-highlighted:text-red-600"
                         : "text-(--_fe-text-sub) hover:bg-(--_fe-hover) hover:text-(--_fe-text) focus:bg-(--_fe-hover) focus:text-(--_fe-text) data-highlighted:bg-(--_fe-hover)  data-highlighted:text-(--_fe-text)",

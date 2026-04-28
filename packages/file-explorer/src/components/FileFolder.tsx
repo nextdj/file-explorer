@@ -86,8 +86,8 @@ export const FileFolder = ({
       className={cn(
         "bg-(--_fe-item-bg-soft) group relative flex w-full cursor-pointer items-center justify-start gap-2.5 rounded-lg border border-transparent p-2 transition-colors   select-none",
         active
-          ? "bg-(--_fe-active-subtle) border-(--_fe-selected)"
-          : "hover:border-(--_fe-selected)",
+          ? "bg-(--_fe-active-subtle) border-(--_fe-border)"
+          : "hover:border-(--_fe-border)",
         className,
       )}
     >
@@ -134,7 +134,7 @@ export const FileFolder = ({
         </div>
       ) : (
         <Tooltip content={fileNode.name}>
-          <p className="text-(--_fe-selected) w-26 truncate pr-8 text-left text-sm">
+          <p className="text-(--_fe-selected) w-26 truncate pr-8 text-left text-[length:var(--_fe-font-sm)]">
             {fileNode.name}
           </p>
         </Tooltip>

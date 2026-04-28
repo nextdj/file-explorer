@@ -97,7 +97,7 @@ export const DataTable = <T extends { id: number | string }>({
 
   return (
     <div className="relative w-full overflow-x-auto">
-      <table className="w-full table-fixed border-separate border-spacing-0 text-sm">
+      <table className="w-full table-fixed border-separate border-spacing-0 text-[length:var(--_fe-font-sm)]">
         <thead className={cn(!showHeader && "h-0")}>
           <tr className="select-none">
             {headers.map((h, i) => {

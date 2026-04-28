@@ -504,10 +504,10 @@ export const FileUploadDialog = ({
       >
         <div className="flex items-start justify-between   px-8 py-8">
           <div className="min-w-0">
-            <h3 className="max-w-155 truncate text-xl leading-tight font-medium text-(--_fe-selected)">
+            <h3 className="max-w-155 truncate text-[length:var(--_fe-font-xl)] leading-tight font-medium text-(--_fe-selected)">
               {t("upload.title")}
             </h3>
-            <p className="mt-1 text-sm text-(--_fe-text-muted)">{dragHint}</p>
+            <p className="mt-1 text-[length:var(--_fe-font-sm)] text-(--_fe-text-muted)">{dragHint}</p>
           </div>
 
           <Button
@@ -537,7 +537,7 @@ export const FileUploadDialog = ({
 
             {canUploadAnything ? (
               <>
-                <p className="mt-2 text-sm text-(--_fe-text-secondary)">
+                <p className="mt-2 text-[length:var(--_fe-font-sm)] text-(--_fe-text-secondary)">
                   {t("upload.chooseFromButtons")}
                 </p>
                 <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
@@ -564,7 +564,7 @@ export const FileUploadDialog = ({
                 </div>
               </>
             ) : (
-              <p className="mt-3 text-sm text-(--_fe-text-muted)">
+              <p className="mt-3 text-[length:var(--_fe-font-sm)] text-(--_fe-text-muted)">
                 {t("upload.disabledMessage")}
               </p>
             )}
@@ -578,14 +578,14 @@ export const FileUploadDialog = ({
                   className="mt-0.5 shrink-0 text-rose-500"
                 />
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-rose-600">
+                  <p className="text-[length:var(--_fe-font-sm)] font-medium text-rose-600">
                     {t("upload.errorCount", { count: errorMessages.length })}
                   </p>
                   <div className="mt-2 space-y-1.5">
                     {errorMessages.map((message) => (
                       <div key={message} className="flex items-start gap-2">
                         <span className="mt-1.75 h-1 w-1 shrink-0 rounded-full bg-rose-400" />
-                        <p className="min-w-0 text-sm leading-5 text-rose-600">
+                        <p className="min-w-0 text-[length:var(--_fe-font-sm)] leading-5 text-rose-600">
                           {message}
                         </p>
                       </div>
@@ -601,10 +601,10 @@ export const FileUploadDialog = ({
               <div className="mb-3 rounded-xl bg-(--_fe-hover)/20 px-4 py-4">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-(--_fe-selected)">
+                    <p className="text-[length:var(--_fe-font-sm)] font-medium text-(--_fe-selected)">
                       {t("upload.totalProgress", { value: totalProgress })}
                     </p>
-                    <p className="mt-1 text-xs text-(--_fe-text-muted)">
+                    <p className="mt-1 text-[length:var(--_fe-font-xs)] text-(--_fe-text-muted)">
                       {t("upload.uploaded", {
                         uploaded: formatSize(uploadedBytes),
                         total: formatSize(totalBytes),
@@ -612,10 +612,10 @@ export const FileUploadDialog = ({
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-medium text-(--_fe-selected)">
+                    <p className="text-[length:var(--_fe-font-sm)] font-medium text-(--_fe-selected)">
                       {t("upload.totalTime", { value: totalDuration })}
                     </p>
-                    <p className="mt-1 text-xs text-(--_fe-text-muted)">
+                    <p className="mt-1 text-[length:var(--_fe-font-xs)] text-(--_fe-text-muted)">
                       {t("upload.taskCount", { count: sortedFiles.length })}
                     </p>
                   </div>
@@ -696,7 +696,7 @@ export const FileUploadDialog = ({
                             <div className="flex items-center justify-between gap-4">
                               <p
                                 className={cn(
-                                  "truncate text-sm font-medium",
+                                  "truncate text-[length:var(--_fe-font-sm)] font-medium",
                                   isError
                                     ? "text-rose-500"
                                     : "text-(--_fe-selected)",
@@ -708,7 +708,7 @@ export const FileUploadDialog = ({
                               <div className="flex shrink-0 items-center gap-4">
                                 <div
                                   className={cn(
-                                    "min-w-18 text-right text-sm",
+                                    "min-w-18 text-right text-[length:var(--_fe-font-sm)]",
                                     isError
                                       ? "font-medium text-rose-500"
                                       : "text-(--_fe-text-muted)",
@@ -720,7 +720,7 @@ export const FileUploadDialog = ({
                                 {isError ? (
                                   <button
                                     type="button"
-                                    className="cursor-pointer text-sm font-medium text-rose-400 transition-colors hover:text-rose-500"
+                                    className="cursor-pointer text-[length:var(--_fe-font-sm)] font-medium text-rose-400 transition-colors hover:text-rose-500"
                                     onClick={() => retryFile(file.id)}
                                   >
                                     {t("action.retry")}
@@ -755,7 +755,7 @@ export const FileUploadDialog = ({
               </div>
             </div>
           ) : (
-            <div className="hidden   flex-1 items-center justify-center px-6 py-10 text-sm text-(--_fe-text-secondary)"></div>
+            <div className="hidden   flex-1 items-center justify-center px-6 py-10 text-[length:var(--_fe-font-sm)] text-(--_fe-text-secondary)"></div>
           )}
         </div>
       </div>

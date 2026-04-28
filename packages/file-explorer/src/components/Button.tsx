@@ -49,9 +49,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     const sizes = {
-      sm: "h-8 px-2.5 text-xs gap-1.5",
-      md: "h-9 px-4 text-sm gap-2",
-      lg: "h-11 px-6 text-base gap-2.5",
+      sm: "h-8 px-2.5 text-[length:var(--_fe-font-xs)] gap-1.5",
+      md: "h-9 px-4 text-[length:var(--_fe-font-sm)] gap-2",
+      lg: "h-11 px-6 text-[length:var(--_fe-font-base)] gap-2.5",
     };
 
     const iconSizes = { sm: 14, md: 18, lg: 20 };

@@ -8,7 +8,7 @@ import { useFileExplorerContext } from "../context";
 
 function CountBadge({ count }: { count: number }) {
   return (
-    <span className="bg-(--_fe-item-bg) text-(--_fe-text-muted) flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 py-0.5 text-[10px] font-bold tracking-tight transition-colors">
+    <span className="bg-(--_fe-item-bg) text-(--_fe-text-muted) flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 py-0.5 text-[length:var(--_fe-font-2xs)] font-bold tracking-tight transition-colors">
       {count}
     </span>
   );
@@ -84,7 +84,7 @@ export const FileGridView = ({
   const renderSection = (title: string, list: any[]) =>
     list.length > 0 && (
       <div className="flex flex-col gap-3">
-        <h3 className="text-(--_fe-selected) flex gap-2 text-[13px] font-bold tracking-widest uppercase">
+        <h3 className="text-(--_fe-selected) flex gap-2 text-[length:var(--_fe-font-sm)] font-bold tracking-widest uppercase">
           <div>{title}</div>
           {/* This badge is local to the grid section header, so keeping it
           inline avoids an extra component file with almost no reuse. */}

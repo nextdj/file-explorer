@@ -25,7 +25,7 @@ export const Progress = ({
       </div>
 
       {showLabel && (
-        <span className={cn("min-w-11 text-right font-mono text-xs")}>
+        <span className={cn("min-w-11 text-right font-mono text-[length:var(--_fe-font-xs)]")}>
           {value}%
         </span>
       )}

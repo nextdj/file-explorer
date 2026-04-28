@@ -11,6 +11,8 @@ import {
   FileExplorerLocale,
   FileExplorerStorageInfo,
   FileExplorerViewControls,
+  FileExplorerFontSize,
+  FileExplorerTheme,
   FileSortDirection,
   FileSortField,
   FileViewMode,
@@ -25,6 +27,8 @@ interface FileExplorerContextValue {
   dateFormat: string;
   breadcrumbs?: BreadcrumbItem[];
   storageInfo?: FileExplorerStorageInfo;
+  fontSize: FileExplorerFontSize;
+  theme: FileExplorerTheme;
   allowMultiSelect: boolean;
   gridSize: "sm" | "md" | "lg";
   defaultViewMode: FileViewMode;
@@ -113,6 +117,8 @@ export const FileExplorerContext = createContext<FileExplorerContextValue>({
   lang: "en",
   t: createTranslator("en"),
   dateFormat: "YYYY/M/D HH:mm:ss",
+  fontSize: "md",
+  theme: "auto",
   allowMultiSelect: true,
   gridSize: "md",
   defaultViewMode: "grid",

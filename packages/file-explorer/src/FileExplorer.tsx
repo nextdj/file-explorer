@@ -54,6 +54,8 @@ export function FileExplorer({
   files,
   breadcrumbs,
   storageInfo,
+  fontSize = "md",
+  theme = "auto",
   allowMultiSelect = true,
   gridSize = "md",
   defaultViewMode = "grid",
@@ -142,7 +144,7 @@ export function FileExplorer({
   };
 
   return (
-    <div className="fe-theme">
+    <div className="fe-theme" data-font-size={fontSize} data-theme={theme}>
       <FileExplorerContext.Provider
         value={{
           lang: resolvedLang,
@@ -150,6 +152,8 @@ export function FileExplorer({
           dateFormat,
           breadcrumbs: finalBreadcrumbs,
           storageInfo,
+          fontSize,
+          theme,
           allowMultiSelect,
           gridSize,
           defaultViewMode: defaultViewMode as FileViewMode,

@@ -150,16 +150,16 @@ export default function Page() {
 
 ## 常见配置
 
-### 单选 / 多选
+### 单选 / 多选、Grid 尺寸、统一字号与主题
 
 ```tsx
-<FileExplorer data={data} allowMultiSelect={false} />
-```
-
-### Grid 尺寸
-
-```tsx
-<FileExplorer data={data} gridSize="lg" />
+<FileExplorer
+  data={data}
+  allowMultiSelect={false}
+  gridSize="lg"
+  fontSize="sm"
+  theme="dark"
+/>
 ```
 
 支持：
@@ -167,6 +167,18 @@ export default function Page() {
 - `"sm"`
 - `"md"`
 - `"lg"`
+
+`fontSize` 也支持：
+
+- `"sm"`
+- `"md"`
+- `"lg"`
+
+`theme` 支持：
+
+- `"auto"`
+- `"light"`
+- `"dark"`
 
 ### 默认视图与默认排序
 
@@ -321,6 +333,8 @@ export default function Page() {
 | `files` | `FileNode[]` | 旧版拆分输入。 |
 | `breadcrumbs` | `BreadcrumbItem[]` | 旧版拆分输入。 |
 | `storageInfo` | `{ totalBytes?: number; availableBytes?: number }` | 显示容量信息。 |
+| `fontSize` | `"sm" \| "md" \| "lg"` | 统一控制组件字号，默认 `"md"`。 |
+| `theme` | `"auto" \| "light" \| "dark"` | 主题模式，默认 `"auto"`。 |
 | `lang` | `string` | 设置语言。 |
 | `dateFormat` | `string` | 设置时间格式。 |
 | `renderPreview` | `(file) => ReactNode` | 自定义 grid 预览。 |

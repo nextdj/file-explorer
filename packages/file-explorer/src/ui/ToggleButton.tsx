@@ -41,9 +41,9 @@ export const ToggleButton = <T extends string>({
       defaultValue={defaultValue}
       onValueChange={(val) => val && onChange?.(val as T)}
       className={cn(
-        "relative inline-flex h-9 items-stretch transition-all",
+        "relative inline-flex h-8 items-stretch overflow-hidden transition-all",
         isTabs
-          ? "border-(--_fe-border) bg-(--_fe-bg) rounded-full border"
+          ? "border-(--_fe-border) bg-(--_fe-bg) rounded-2xl border"
           : "border-(--_fe-border) border-b bg-transparent",
         className, // External overrides still win here, including shape changes.
       )}
@@ -56,7 +56,7 @@ export const ToggleButton = <T extends string>({
             <ToggleGroup.Item
               value={item.value}
               className={cn(
-                "text-(--_fe-text-muted) relative flex flex-1 items-center justify-center px-0 text-sm transition-all outline-none",
+                "text-(--_fe-text-muted) relative flex flex-1 items-center justify-center px-0 text-[length:var(--_fe-font-sm)] transition-all outline-none",
                 "data-[state=on]:text-(--_fe-selected)",
                 "rounded-full hover:text-(--_fe-selected)",
                 itemClassName,
@@ -67,13 +67,13 @@ export const ToggleButton = <T extends string>({
                   className={cn(
                     "bg-(--_fe-active) absolute z-0 transition-colors",
                     "inset-0",
-                    "rounded-full",
+                    "rounded-xl",
                     itemClassName,
                   )}
                 />
               )}
               <div className="relative z-10 flex items-center gap-1.5">
-                {item.icon && <item.icon size={16} strokeWidth={2} />}
+                {item.icon && <item.icon size={15} strokeWidth={1.85} />}
                 {item.label && (
                   <div className="font-medium whitespace-nowrap">
                     {item.label}

@@ -177,7 +177,9 @@ function TransferTreeNode({
             </>
           )}
         </span>
-        <span className="truncate text-[length:var(--_fe-font-sm)]">{node.name}</span>
+        <span className="truncate text-[length:var(--_fe-font-sm)]">
+          {node.name}
+        </span>
         {state.loading ? (
           <Loader2
             size={14}
@@ -508,7 +510,7 @@ export function TransferDialog({
         onClick={onClose}
       />
 
-      <div className="relative flex max-h-[82vh] w-full max-w-3xl flex-col overflow-hidden rounded-3xl border border-(--_fe-border) bg-(--_fe-bg) shadow-2xl">
+      <div className="relative flex max-h-[82vh] w-full max-w-xl flex-col overflow-hidden rounded-3xl border border-(--_fe-border) bg-(--_fe-bg) shadow-2xl">
         <div className="flex items-start justify-between px-8 pt-7">
           <div className="min-w-0">
             <h3 className="max-w-155 truncate text-[length:var(--_fe-font-xl)] leading-tight font-medium text-(--_fe-selected)">
@@ -516,10 +518,15 @@ export function TransferDialog({
             </h3>
           </div>
 
-          <Button icon={X} variant="ghost" tip={t("action.close")} onClick={onClose} />
+          <Button
+            icon={X}
+            variant="ghost"
+            tip={t("action.close")}
+            onClick={onClose}
+          />
         </div>
 
-        <div className="mt-7 border-b border-(--_fe-border-soft) px-8">
+        <div className="mt-5 border-b border-(--_fe-border-soft) px-8">
           <div className="flex items-end gap-8">
             {normalizedSources.map((source) => {
               const isActive = source.id === activeSourceId;

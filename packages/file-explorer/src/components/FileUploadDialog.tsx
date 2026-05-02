@@ -498,7 +498,7 @@ export const FileUploadDialog = ({
       />
       <div
         className={cn(
-          "relative flex max-h-[82vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-(--_fe-border) bg-(--_fe-bg) shadow-2xl transition-all duration-180 ease-out",
+          "relative flex max-h-[82vh] w-full max-w-xl flex-col overflow-hidden rounded-3xl border border-(--_fe-border) bg-(--_fe-bg) shadow-2xl transition-all duration-180 ease-out",
           isSubmittingToExternal && "translate-y-2 scale-[0.985] opacity-0",
         )}
       >
@@ -507,7 +507,9 @@ export const FileUploadDialog = ({
             <h3 className="max-w-155 truncate text-[length:var(--_fe-font-xl)] leading-tight font-medium text-(--_fe-selected)">
               {t("upload.title")}
             </h3>
-            <p className="mt-1 text-[length:var(--_fe-font-sm)] text-(--_fe-text-muted)">{dragHint}</p>
+            <p className="mt-1 text-[length:var(--_fe-font-sm)] text-(--_fe-text-muted)">
+              {dragHint}
+            </p>
           </div>
 
           <Button

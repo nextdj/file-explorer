@@ -41,10 +41,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const noHoverVariants = {
       primary: "bg-(--_fe-primary-bg) text-(--_fe-primary-text)",
-      secondary:
-        "border border-(--_fe-border) bg-(--_fe-bg) text-(--_fe-text)",
-      danger:
-        "border border-(--_fe-danger) text-(--_fe-danger)",
+      secondary: "border border-(--_fe-border) bg-(--_fe-bg) text-(--_fe-text)",
+      danger: "border border-(--_fe-danger) text-(--_fe-danger)",
       ghost: " ",
     };
 
@@ -67,7 +65,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         className={cn(
           "inline-flex cursor-pointer items-center justify-center rounded-lg leading-none whitespace-nowrap transition-colors",
           "focus:outline-none focus:ring-0 focus-visible:outline-none",
-          "disabled:pointer-events-none disabled:opacity-30 active:opacity-80",
+          "disabled:pointer-events-none  disabled:opacity-30 active:opacity-80",
           sizes[size],
           noHover ? noHoverVariants[finalVariant] : variants[finalVariant],
           !hasChildren && "aspect-square px-0",

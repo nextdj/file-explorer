@@ -292,7 +292,7 @@ export const ViewToolbar = ({
                     icon: Rows3,
                   },
                 ]}
-                className="h-7.5 border border-(--_fe-border) bg-(--_fe-bg)"
+                className="h-7.5 bg-transparent"
                 itemClassName="h-full min-w-7.5 cursor-pointer text-(--_fe-text-sub) data-[state=on]:text-(--_fe-selected) hover:text-(--_fe-selected)"
                 showSeparator={false}
               />

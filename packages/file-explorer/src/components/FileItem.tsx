@@ -102,7 +102,7 @@ export const FileItem = ({
       className={cn(
         "group relative flex cursor-pointer flex-col overflow-hidden rounded-xl border border-transparent transition-colors duration-150 ease-out select-none",
         "hover:border-(--_fe-border)",
-        active && "border-(--_fe-border) shadow-md",
+        active && "border-(--_fe-border)  ",
         className,
       )}
     >
@@ -131,7 +131,6 @@ export const FileItem = ({
             <div
               className={cn(
                 "absolute top-3 left-3 rounded-full px-2 py-1 text-[length:var(--_fe-font-2xs)] leading-none font-medium tracking-[0.08em]",
-                bgClass,
                 color,
               )}
             >
@@ -152,7 +151,7 @@ export const FileItem = ({
       </div>
 
       {/* File metadata */}
-      <div className="p-3 ">
+      <div className="p-3">
         {isEditing ? (
           <div onClick={(e) => e.stopPropagation()}>
             <InlineNameInput
@@ -165,7 +164,7 @@ export const FileItem = ({
           </div>
         ) : (
           <Tooltip content={fileNode.name}>
-            <div className="text-(--_fe-selected) line-clamp-1 text-left text-[length:var(--_fe-font-sm)] break-all">
+            <div className="text-(--_fe-selected) items-center justify-center flex line-clamp-1 text-left text-[length:var(--_fe-font-sm)] break-all">
               {tagColors.length > 0 && (
                 <span className="mr-1.5 inline-flex -translate-y-px items-center">
                   <ColorTags colors={tagColors} size={10} />

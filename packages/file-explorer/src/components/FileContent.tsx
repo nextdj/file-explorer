@@ -90,7 +90,7 @@ function Breadcrumbs({
         variant="secondary"
         size="sm"
         className={cn(
-          "bg-(--_fe-item-bg-soft) hover:bg-(--_fe-hover-soft) flex size-7 items-center justify-center rounded-full border-(--_fe-border-soft)",
+          "  hover:bg-(--_fe-hover-soft) flex size-6 items-center justify-center rounded-full border-(--_fe-text-muted)/50",
           isRoot &&
             "bg-(--_fe-active-subtle) text-(--_fe-text-muted) hover:bg-(--_fe-active-subtle)",
         )}

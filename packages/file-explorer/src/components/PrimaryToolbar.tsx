@@ -22,7 +22,7 @@ import { useFileExplorerContext } from "../context";
 
 function PillGroup({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-center rounded-full border border-(--_fe-glass-border) bg-(--_fe-glass-bg) p-1 shadow-(--_fe-shadow-soft)">
+    <div className="flex items-center rounded-3xl border border-(--_fe-glass-border) bg-(--_fe-glass-bg) p-0.75 shadow-(--_fe-shadow-soft)">
       {children}
     </div>
   );
@@ -99,13 +99,13 @@ function ToolbarActionButton({
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        "inline-flex h-8 w-8 items-center justify-center rounded-full px-0 transition-colors",
+        "inline-flex h-7.5 w-7.5 items-center justify-center rounded-full px-0 transition-colors",
         isDelete
           ? "text-red-500 hover:bg-(--_fe-danger-soft) hover:text-red-600"
           : "text-(--_fe-text-sub) hover:bg-(--_fe-hover) hover:text-(--_fe-text)",
       )}
     >
-      <Icon size={18} strokeWidth={1.9} />
+      <Icon size={16} strokeWidth={1.9} />
     </Button>
   );
 }

@@ -43,8 +43,8 @@ export const ToggleButton = <T extends string>({
       className={cn(
         "relative inline-flex h-8 items-stretch overflow-hidden transition-all",
         isTabs
-          ? "border-(--_fe-border) bg-(--_fe-bg) rounded-2xl border"
-          : "border-(--_fe-border) border-b bg-transparent",
+          ? "border-(--_fe-border)/50 bg-(--_fe-bg) rounded-xl border "
+          : "border-(--_fe-border)/50 border-b bg-transparent",
         className, // External overrides still win here, including shape changes.
       )}
     >
@@ -65,9 +65,9 @@ export const ToggleButton = <T extends string>({
               {isTabs && isSelected && (
                 <div
                   className={cn(
-                    "bg-(--_fe-active) absolute z-0 transition-colors",
+                    "bg-(--_fe-hover) absolute z-0 transition-colors",
                     "inset-0",
-                    "rounded-xl",
+                    "rounded-lg",
                     itemClassName,
                   )}
                 />

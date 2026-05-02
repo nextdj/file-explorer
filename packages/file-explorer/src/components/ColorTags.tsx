@@ -40,6 +40,7 @@ export const ColorTags = ({ colors, size = 10, className }: ColorTagsProps) => {
           style={{
             width: `${size}px`,
             height: `${size}px`,
+            top: "1px",
             left: `${index * overlapAmount}px`,
             zIndex: index + 1, // Later dots render on top
           }}

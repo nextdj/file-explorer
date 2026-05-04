@@ -218,7 +218,7 @@ Size: ${formatBytes(file.size)}</pre>
         lang="en"
         toolbarStyle="default"
         fontSize="sm"
-        theme="dark"
+        theme="auto"
         features={{
           uploadFile: true,
           uploadFolder: true,

@@ -125,8 +125,8 @@
         --_fe-text-muted: var(--fe-text-muted, #a9adb3);
         --_fe-text-sub: var(--fe-text-sub, #d0d1d2);
         --_fe-item-bg: var(--fe-item-bg, #23262b);
-        --_fe-hover: var(--fe-hover, #2d3035);
-        --_fe-border: var(--fe-border, #3a3d42);
+        --_fe-hover: var(--fe-hover, #ffffff2f);
+        --_fe-border: var(--fe-border, #ffffff2f);
         --_fe-active: var(--fe-active, #303338);
         --_fe-selected: var(--fe-selected, #f4f4f4);
         --_fe-primary-bg: var(--fe-primary-bg, #f4f4f4);
@@ -141,5 +141,6 @@
         --_fe-glass-border: var(--fe-glass-border, #ffffff1f);
         --_fe-shadow-soft: var(--fe-shadow-soft, 0 1px 28px #02061747);
         --_fe-shadow-floating: var(--fe-shadow-floating, 0 14px 36px #02061752);
+        --_fe-item-bg-soft: color-mix(in srgb, var(--_fe-text-sub) 8%, transparent);
     }
 }
